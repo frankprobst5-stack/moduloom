@@ -1,0 +1,22 @@
+{
+    "name": "moduloom/notes",
+    "description": "Notes module — plain text notes, no dependencies on any other module.",
+    "type": "library",
+    "version": "1.0.0",
+    "license": "proprietary",
+    "require": {
+        "php": "^8.4"
+    },
+    "autoload": {
+        "psr-4": {
+            "Moduloom\\Notes\\": "src/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Moduloom\\Notes\\NotesServiceProvider"
+            ]
+        }
+    }
+}

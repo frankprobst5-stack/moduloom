@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "293b09444e4e7c5cfecf4463ccbac046",
+    "content-hash": "92b9c75172a6307b25b8b4069e840b40",
     "packages": [
         {
             "name": "brick/math",
@@ -2037,6 +2037,38 @@
                 }
             ],
             "time": "2026-11-04T12:45:07+00:00"
+        },
+        {
+            "name": "moduloom/notes",
+            "version": "1.0.0",
+            "dist": {
+                "type": "path",
+                "url": "modules/notes",
+                "reference": "ec7cfb33f6d8cef78e9b2f71105f4fd0ec596856"
+            },
+            "require": {
+                "php": "^8.4"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Moduloom\\Notes\\NotesServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Moduloom\\Notes\\": "src/"
+                }
+            },
+            "license": [
+                "proprietary"
+            ],
+            "description": "Notes module — plain text notes, no dependencies on any other module.",
+            "transport-options": {
+                "relative": true
+            }
         },
         {
             "name": "monolog/monolog",

@@ -5,10 +5,17 @@
     "description": "Modular open-source application platform — one platform, many ecosystems.",
     "keywords": ["laravel", "modular", "cms"],
     "license": "proprietary",
+    "repositories": [
+        {
+            "type": "path",
+            "url": "modules/*"
+        }
+    ],
     "require": {
         "php": "^8.4",
         "laravel/framework": "^13.17",
-        "laravel/tinker": "^3.0"
+        "laravel/tinker": "^3.0",
+        "moduloom/notes": "*"
     },
     "require-dev": {
         "fakerphp/faker": "^1.23",
