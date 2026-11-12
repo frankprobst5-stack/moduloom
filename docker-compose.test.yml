@@ -1,0 +1,17 @@
+services:
+  mariadb-test:
+    image: mariadb:11
+    container_name: moduloom-test-db
+    restart: "no"
+    ports:
+      - "3309:3306"
+    environment:
+      MARIADB_ROOT_PASSWORD: moduloom
+      MARIADB_DATABASE: moduloom_test
+    tmpfs:
+      - /var/lib/mysql
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
