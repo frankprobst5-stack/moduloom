@@ -60,6 +60,14 @@ class Reconciler
     /**
      * Invariant 1: removes one referrer. The module is never deleted
      * here — it is only orphaned once zero distinct referrers remain.
+     *
+     * Cascades: if this orphans the module, any OTHER module that was
+     * only still installed because *this* module required it
+     * (module_dependency rows where it is the referrer) loses that
+     * referrer too. Without this, an orphaned module's own dependency
+     * references keep counting as live referrers forever — a module
+     * nothing active actually needs stays propped up by a module
+     * nobody can reach, a zombie chain that only grows over time.
      */
     public function removeReference(string $moduleSlug, string $referenceType, string $referenceIdentifier): void
     {
@@ -71,6 +79,14 @@ class Reconciler
 
             if ($this->referenceCount($moduleSlug) === 0) {
                 InstalledModule::where('module_slug', $moduleSlug)->update(['status' => 'orphaned']);
+
+                $dependencies = ModuleReference::where('reference_type', 'module_dependency')
+                    ->where('reference_identifier', $moduleSlug)
+                    ->pluck('module_slug');
+
+                foreach ($dependencies as $dependencySlug) {
+                    $this->removeReference($dependencySlug, 'module_dependency', $moduleSlug);
+                }
             }
         });
     }

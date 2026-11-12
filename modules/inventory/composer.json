@@ -1,0 +1,22 @@
+{
+    "name": "moduloom/inventory",
+    "description": "Inventory module — stock items with reorder thresholds. No dependencies on any other module.",
+    "type": "library",
+    "version": "1.0.0",
+    "license": "proprietary",
+    "require": {
+        "php": "^8.4"
+    },
+    "autoload": {
+        "psr-4": {
+            "Moduloom\\Inventory\\": "src/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Moduloom\\Inventory\\InventoryServiceProvider"
+            ]
+        }
+    }
+}

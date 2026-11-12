@@ -1,0 +1,23 @@
+{
+    "name": "moduloom/invoicing",
+    "description": "Invoicing module — invoices optionally tied to a CRM contact. Requires crm.",
+    "type": "library",
+    "version": "1.0.0",
+    "license": "proprietary",
+    "require": {
+        "php": "^8.4",
+        "moduloom/crm": "*"
+    },
+    "autoload": {
+        "psr-4": {
+            "Moduloom\\Invoicing\\": "src/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Moduloom\\Invoicing\\InvoicingServiceProvider"
+            ]
+        }
+    }
+}

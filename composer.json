@@ -19,7 +19,10 @@
         "moduloom/tasks": "*",
         "moduloom/files": "*",
         "moduloom/personal-databases": "*",
-        "moduloom/website": "*"
+        "moduloom/website": "*",
+        "moduloom/crm": "*",
+        "moduloom/inventory": "*",
+        "moduloom/invoicing": "*"
     },
     "require-dev": {
         "fakerphp/faker": "^1.23",

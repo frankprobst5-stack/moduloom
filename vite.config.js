@@ -18,6 +18,9 @@ export default defineConfig({
                 'resources/js/modules/files/admin.tsx',
                 'resources/js/modules/personal-databases/admin.tsx',
                 'resources/js/modules/website/admin.tsx',
+                'resources/js/modules/crm/admin.tsx',
+                'resources/js/modules/inventory/admin.tsx',
+                'resources/js/modules/invoicing/admin.tsx',
             ],
             refresh: true,
             fonts: [

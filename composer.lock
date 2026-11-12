@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "667853414e9030bb5132c34fb8fa1376",
+    "content-hash": "a595bd8cb28f7f6bdc1573b01fc356a7",
     "packages": [
         {
             "name": "brick/math",
@@ -2039,6 +2039,38 @@
             "time": "2026-11-04T12:45:07+00:00"
         },
         {
+            "name": "moduloom/crm",
+            "version": "1.0.0",
+            "dist": {
+                "type": "path",
+                "url": "modules/crm",
+                "reference": "f9c45da5772f3e67fc61ddecf6d94c63eaa7b6e2"
+            },
+            "require": {
+                "php": "^8.4"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Moduloom\\Crm\\CrmServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Moduloom\\Crm\\": "src/"
+                }
+            },
+            "license": [
+                "proprietary"
+            ],
+            "description": "CRM module — contacts. No dependencies on any other module.",
+            "transport-options": {
+                "relative": true
+            }
+        },
+        {
             "name": "moduloom/files",
             "version": "1.0.0",
             "dist": {
@@ -2066,6 +2098,71 @@
                 "proprietary"
             ],
             "description": "Files module — real uploaded-file storage, no dependencies on any other module.",
+            "transport-options": {
+                "relative": true
+            }
+        },
+        {
+            "name": "moduloom/inventory",
+            "version": "1.0.0",
+            "dist": {
+                "type": "path",
+                "url": "modules/inventory",
+                "reference": "ec4286088b0d437a822878272de3f73edddd75dd"
+            },
+            "require": {
+                "php": "^8.4"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Moduloom\\Inventory\\InventoryServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Moduloom\\Inventory\\": "src/"
+                }
+            },
+            "license": [
+                "proprietary"
+            ],
+            "description": "Inventory module — stock items with reorder thresholds. No dependencies on any other module.",
+            "transport-options": {
+                "relative": true
+            }
+        },
+        {
+            "name": "moduloom/invoicing",
+            "version": "1.0.0",
+            "dist": {
+                "type": "path",
+                "url": "modules/invoicing",
+                "reference": "fbca4f1a76ae39d6a881f53619b770cd72d162b3"
+            },
+            "require": {
+                "moduloom/crm": "*",
+                "php": "^8.4"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Moduloom\\Invoicing\\InvoicingServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Moduloom\\Invoicing\\": "src/"
+                }
+            },
+            "license": [
+                "proprietary"
+            ],
+            "description": "Invoicing module — invoices optionally tied to a CRM contact. Requires crm.",
             "transport-options": {
                 "relative": true
             }
