@@ -1,0 +1,200 @@
+# Moduloom — Master Architecture
+
+Status: pre-implementation. This document captures decisions made before
+any code was written, so they can be challenged and revised deliberately
+instead of discovered by accident mid-build. Sections marked **OPEN** are
+known-unresolved and should not be treated as decided.
+
+## Technology decisions
+
+| Layer | Choice |
+|---|---|
+| Backend | Laravel / PHP |
+| Frontend | React / TypeScript |
+| Database | MariaDB |
+| Styling | Tailwind |
+| Package manager (backend) | Composer — every module is its own package |
+| Source hosting | GitHub |
+| Deployment target | Shared hosting (BlueHost/DreamHost-class), self-hosted |
+
+Each module is an independent Composer package with its own namespace, its
+own Laravel migrations, and its own internal versioning. The kernel never
+needs to know how a module's internal schema evolves — only the module's
+slug, version, and whether it is currently present in an instance. Module
+internals and kernel bookkeeping are two separate concerns and must stay
+that way.
+
+## The model: a package manager for application capability
+
+The relationship between the kernel, modules, and ecosystem profiles is
+deliberately modeled on OS package managers (apt, Homebrew), because that
+model has already solved the hard version of this problem: safely
+installing, sharing, and removing interdependent pieces of software
+without a human having to reason about every other piece that might
+depend on what they're removing.
+
+- A **module** is the unit of installable capability (CRM, Forums,
+  Invoicing, ...).
+- A **profile** (what the Vision doc calls an "ecosystem") is a
+  meta-package: a named, versioned list of modules plus default
+  configuration, default role grants, and a starter theme.
+- Installing a profile is exactly like installing a meta-package: it
+  pulls in everything it lists, skips anything already present, and
+  records *why* each module is there.
+
+## The four kernel invariants
+
+Every module, profile, and migration must obey these. They are listed in
+order of how much destructive-state risk they eliminate.
+
+### 1. Reference-counted module registry
+
+Modules track **who requested them**, not a boolean `is_installed` flag.
+
+A module becomes eligible for removal only when it has zero remaining
+referrers. A referrer can be:
+- a **profile** (an ecosystem that bundled it),
+- a **manual** install (a user added it directly, outside any profile),
+- a **module dependency** (another installed module declares it as a
+  requirement — e.g. Invoicing requires CRM).
+
+All three source types matter and must be tracked distinctly. Collapsing
+"module dependency" into "profile" loses the ability to say *"CRM is
+still needed because Invoicing needs it"*, independent of which profile
+either arrived through.
+
+`module_references` must carry a **uniqueness constraint** on
+`(module_slug, reference_type, reference_identifier)`. Without it,
+re-applying the same profile twice — which invariant 4 requires to be
+safe — can insert duplicate rows, and "reference count" stops meaning
+anything. "Zero references" means zero *distinct* referrers, not zero
+rows.
+
+### 2. Additive overlays — create if missing, extend if present
+
+A profile never owns configuration. It only adds what is missing.
+
+If a module a profile wants is already present (installed by an earlier
+profile, or manually), the new profile must still:
+- **skip** re-provisioning the module itself (its config, its data, its
+  settings are immutable to the incoming profile), but
+- **always** write its own reference row for that module.
+
+These are two different operations and must not share one
+"already exists → skip entirely" code path. If they do, a profile that
+finds its own modules already present can silently fail to register that
+it depends on them — and a later, unrelated removal of the *original*
+referrer can then delete a module a different profile is still actively
+using.
+
+### 3. Instance-scoped roles, profile-granted capabilities
+
+Roles (Owner, Staff, Customer, ...) belong to the **instance**, not to any
+one profile. A profile that wants to grant a capability to an existing
+role (e.g. the Community profile granting `forums.view` to a `Customer`
+role that Small Business already created) attaches a grant — it never
+recreates or redefines the role.
+
+`role_capability_grants` needs the same N:1 discipline as module
+references: a given `(role, capability)` pair can have grants from
+multiple sources. Removing one profile's grant must check whether *any
+other* source still grants that same capability to that same role before
+revoking it — never assume one row's deletion is authoritative.
+
+### 4. Point-in-time snapshot semantics — no live profile sync
+
+Installing a profile is an **imperative, versioned transition applied
+once**, not a live-synced desired-state loop. `small-business@1.0.0`
+installed today does not change if Moduloom ships `small-business@2.0.0`
+next year. An instance only moves to a newer profile version if an admin
+explicitly re-applies it.
+
+This falls out of invariants 1–3 as a free property, not a separately
+built feature: because profile application is idempotent and additive,
+"upgrading" a profile is *the same reconciler operation* as installing it
+for the first time — it just finds most modules already present and adds
+whatever changed. If upgrade logic ever needs its own code path distinct
+from install logic, that is a signal invariant 2 has a hole.
+
+## Removal is non-destructive by default
+
+Hitting zero references does **not** delete a module's data. It moves the
+module to an `orphaned` state: hidden from navigation, disabled, data
+retained in place. Actually dropping a module's tables and files is a
+separate, explicitly-confirmed, distinct action. Auto-deleting on
+refcount-zero is the one place this design could become destructive by
+default, which directly contradicts the Vision document's core claim.
+
+## Kernel schema sketch
+
+```
+installed_modules
+  module_slug        (pk)
+  version
+  status             -- active | disabled | orphaned
+  installed_at
+
+module_references
+  module_slug
+  reference_type     -- profile | manual | module_dependency
+  reference_identifier
+  UNIQUE (module_slug, reference_type, reference_identifier)
+
+roles
+  role_slug          (pk)
+  instance-scoped, created by whichever profile/module first needs them
+
+capabilities
+  capability_slug    (pk)
+
+role_capability_grants
+  role_slug
+  capability_slug
+  granted_by_source  -- which profile/module granted this
+  UNIQUE (role_slug, capability_slug, granted_by_source)
+
+profile_install_history
+  profile_slug
+  version
+  installed_at
+  installed_by
+```
+
+A module's own internal schema (its own tables, its own migrations) lives
+entirely inside that module's Composer package and is versioned
+independently via Laravel's own migration system. The kernel schema above
+only ever answers "which modules exist in this instance and why" — never
+"what does this module's data look like."
+
+## Module manifest (sketch)
+
+Every module package ships a manifest describing:
+- `slug`, `version`
+- `requires`: other module slugs it depends on (feeds `module_dependency`
+  references)
+- `nav`: what it contributes to the sidebar, with a sort weight
+- `capabilities`: what capabilities it introduces and which default role(s)
+  it suggests granting them to
+- `migrations`: its own, run through Laravel's normal migration system
+
+A profile manifest describes:
+- `slug`, `version`
+- `modules`: required module slugs
+- `optional_modules`: suggested, not auto-installed
+- `default_config`: applied only to modules it is the first to provision
+- `role_grants`: capability grants it attaches to roles it creates or
+  finds already present
+
+## OPEN questions (deliberately unresolved)
+
+- Exact format and validation story for module/profile manifests (JSON?
+  PHP array returned from a service provider? versioned schema?).
+- How an orphaned module's data is eventually, optionally, purged — and
+  by whom.
+- Theme system: how a profile's "starter theme" relates to a module's own
+  front-end templates, and how far theme overriding goes per-module vs.
+  site-wide.
+- Multi-tenancy: is one Moduloom install always one organization, or can
+  a single deployment host multiple independent instances?
+- Authentication/session model details beyond "roles are instance-scoped."
+- API surface for the React admin frontend: REST, GraphQL, or both.
