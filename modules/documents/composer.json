@@ -1,0 +1,22 @@
+{
+    "name": "moduloom/documents",
+    "description": "Documents module — real uploaded-file storage for business documents. No dependencies on any other module.",
+    "type": "library",
+    "version": "1.0.0",
+    "license": "proprietary",
+    "require": {
+        "php": "^8.4"
+    },
+    "autoload": {
+        "psr-4": {
+            "Moduloom\\Documents\\": "src/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Moduloom\\Documents\\DocumentsServiceProvider"
+            ]
+        }
+    }
+}

@@ -1,0 +1,22 @@
+{
+    "name": "moduloom/directories",
+    "description": "Directories module — a listing of entries by category. No dependencies on any other module.",
+    "type": "library",
+    "version": "1.0.0",
+    "license": "proprietary",
+    "require": {
+        "php": "^8.4"
+    },
+    "autoload": {
+        "psr-4": {
+            "Moduloom\\Directories\\": "src/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Moduloom\\Directories\\DirectoriesServiceProvider"
+            ]
+        }
+    }
+}

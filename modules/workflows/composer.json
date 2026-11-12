@@ -1,0 +1,22 @@
+{
+    "name": "moduloom/workflows",
+    "description": "Workflows module — approval requests with a status. No dependencies on any other module. Reused by both the Enterprise and Government profiles.",
+    "type": "library",
+    "version": "1.0.0",
+    "license": "proprietary",
+    "require": {
+        "php": "^8.4"
+    },
+    "autoload": {
+        "psr-4": {
+            "Moduloom\\Workflows\\": "src/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Moduloom\\Workflows\\WorkflowsServiceProvider"
+            ]
+        }
+    }
+}

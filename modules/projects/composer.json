@@ -1,0 +1,22 @@
+{
+    "name": "moduloom/projects",
+    "description": "Projects module — projects with tasks. No dependencies on any other module.",
+    "type": "library",
+    "version": "1.0.0",
+    "license": "proprietary",
+    "require": {
+        "php": "^8.4"
+    },
+    "autoload": {
+        "psr-4": {
+            "Moduloom\\Projects\\": "src/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Moduloom\\Projects\\ProjectsServiceProvider"
+            ]
+        }
+    }
+}

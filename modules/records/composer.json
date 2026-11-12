@@ -1,0 +1,22 @@
+{
+    "name": "moduloom/records",
+    "description": "Records module — searchable public record entries with a redaction flag. No dependencies on any other module.",
+    "type": "library",
+    "version": "1.0.0",
+    "license": "proprietary",
+    "require": {
+        "php": "^8.4"
+    },
+    "autoload": {
+        "psr-4": {
+            "Moduloom\\Records\\": "src/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Moduloom\\Records\\RecordsServiceProvider"
+            ]
+        }
+    }
+}

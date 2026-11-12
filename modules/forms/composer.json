@@ -1,0 +1,22 @@
+{
+    "name": "moduloom/forms",
+    "description": "Forms module — simple form templates and submissions. No dependencies on any other module.",
+    "type": "library",
+    "version": "1.0.0",
+    "license": "proprietary",
+    "require": {
+        "php": "^8.4"
+    },
+    "autoload": {
+        "psr-4": {
+            "Moduloom\\Forms\\": "src/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Moduloom\\Forms\\FormsServiceProvider"
+            ]
+        }
+    }
+}

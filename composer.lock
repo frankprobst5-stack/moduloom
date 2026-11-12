@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "a595bd8cb28f7f6bdc1573b01fc356a7",
+    "content-hash": "c82cfc5f2ed79b4cc300a8758befc7c2",
     "packages": [
         {
             "name": "brick/math",
@@ -2039,6 +2039,103 @@
             "time": "2026-11-04T12:45:07+00:00"
         },
         {
+            "name": "moduloom/applications",
+            "version": "1.0.0",
+            "dist": {
+                "type": "path",
+                "url": "modules/applications",
+                "reference": "88da5fc2a389ae8bcbbf3ba94e353a0d757c196f"
+            },
+            "require": {
+                "php": "^8.4"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Moduloom\\Applications\\ApplicationsServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Moduloom\\Applications\\": "src/"
+                }
+            },
+            "license": [
+                "proprietary"
+            ],
+            "description": "Applications module — intake applications under review. No dependencies on any other module.",
+            "transport-options": {
+                "relative": true
+            }
+        },
+        {
+            "name": "moduloom/assignments",
+            "version": "1.0.0",
+            "dist": {
+                "type": "path",
+                "url": "modules/assignments",
+                "reference": "e1e3801908d8d5f82ce71f25332a6d7b288f6294"
+            },
+            "require": {
+                "moduloom/classrooms": "*",
+                "php": "^8.4"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Moduloom\\Assignments\\AssignmentsServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Moduloom\\Assignments\\": "src/"
+                }
+            },
+            "license": [
+                "proprietary"
+            ],
+            "description": "Assignments module — assignments scoped to a classroom. Requires classrooms.",
+            "transport-options": {
+                "relative": true
+            }
+        },
+        {
+            "name": "moduloom/classrooms",
+            "version": "1.0.0",
+            "dist": {
+                "type": "path",
+                "url": "modules/classrooms",
+                "reference": "f56f9be0516b60acb888b3609ea04302588b3ae9"
+            },
+            "require": {
+                "php": "^8.4"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Moduloom\\Classrooms\\ClassroomsServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Moduloom\\Classrooms\\": "src/"
+                }
+            },
+            "license": [
+                "proprietary"
+            ],
+            "description": "Classrooms module — classrooms with a student roster. No dependencies on any other module.",
+            "transport-options": {
+                "relative": true
+            }
+        },
+        {
             "name": "moduloom/crm",
             "version": "1.0.0",
             "dist": {
@@ -2071,6 +2168,102 @@
             }
         },
         {
+            "name": "moduloom/directories",
+            "version": "1.0.0",
+            "dist": {
+                "type": "path",
+                "url": "modules/directories",
+                "reference": "c59d22436a977cdd69d55ea2956e564008b7e6a7"
+            },
+            "require": {
+                "php": "^8.4"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Moduloom\\Directories\\DirectoriesServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Moduloom\\Directories\\": "src/"
+                }
+            },
+            "license": [
+                "proprietary"
+            ],
+            "description": "Directories module — a listing of entries by category. No dependencies on any other module.",
+            "transport-options": {
+                "relative": true
+            }
+        },
+        {
+            "name": "moduloom/documents",
+            "version": "1.0.0",
+            "dist": {
+                "type": "path",
+                "url": "modules/documents",
+                "reference": "382f3dedd2e36ce02096f9d0ca8a8e09a63667ee"
+            },
+            "require": {
+                "php": "^8.4"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Moduloom\\Documents\\DocumentsServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Moduloom\\Documents\\": "src/"
+                }
+            },
+            "license": [
+                "proprietary"
+            ],
+            "description": "Documents module — real uploaded-file storage for business documents. No dependencies on any other module.",
+            "transport-options": {
+                "relative": true
+            }
+        },
+        {
+            "name": "moduloom/events",
+            "version": "1.0.0",
+            "dist": {
+                "type": "path",
+                "url": "modules/events",
+                "reference": "1012ef8de47b937639d8581a5fdd046090dcb3c2"
+            },
+            "require": {
+                "php": "^8.4"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Moduloom\\Events\\EventsServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Moduloom\\Events\\": "src/"
+                }
+            },
+            "license": [
+                "proprietary"
+            ],
+            "description": "Events module — events with registrations. No dependencies on any other module.",
+            "transport-options": {
+                "relative": true
+            }
+        },
+        {
             "name": "moduloom/files",
             "version": "1.0.0",
             "dist": {
@@ -2098,6 +2291,70 @@
                 "proprietary"
             ],
             "description": "Files module — real uploaded-file storage, no dependencies on any other module.",
+            "transport-options": {
+                "relative": true
+            }
+        },
+        {
+            "name": "moduloom/forms",
+            "version": "1.0.0",
+            "dist": {
+                "type": "path",
+                "url": "modules/forms",
+                "reference": "069dc6ee70d4a1ad92cc0085ffa0b6189513334b"
+            },
+            "require": {
+                "php": "^8.4"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Moduloom\\Forms\\FormsServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Moduloom\\Forms\\": "src/"
+                }
+            },
+            "license": [
+                "proprietary"
+            ],
+            "description": "Forms module — simple form templates and submissions. No dependencies on any other module.",
+            "transport-options": {
+                "relative": true
+            }
+        },
+        {
+            "name": "moduloom/forums",
+            "version": "1.0.0",
+            "dist": {
+                "type": "path",
+                "url": "modules/forums",
+                "reference": "d799208fd684e8c1d0168b77556bbaeb69dce78d"
+            },
+            "require": {
+                "php": "^8.4"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Moduloom\\Forums\\ForumsServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Moduloom\\Forums\\": "src/"
+                }
+            },
+            "license": [
+                "proprietary"
+            ],
+            "description": "Forums module — threads and replies. No dependencies on any other module.",
             "transport-options": {
                 "relative": true
             }
@@ -2168,6 +2425,70 @@
             }
         },
         {
+            "name": "moduloom/knowledge-base",
+            "version": "1.0.0",
+            "dist": {
+                "type": "path",
+                "url": "modules/knowledge-base",
+                "reference": "47fc72301b88e0a7493f063c43adc12da384fdb1"
+            },
+            "require": {
+                "php": "^8.4"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Moduloom\\KnowledgeBase\\KnowledgeBaseServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Moduloom\\KnowledgeBase\\": "src/"
+                }
+            },
+            "license": [
+                "proprietary"
+            ],
+            "description": "Knowledge base module — published articles with a public render route. No dependencies on any other module.",
+            "transport-options": {
+                "relative": true
+            }
+        },
+        {
+            "name": "moduloom/membership",
+            "version": "1.0.0",
+            "dist": {
+                "type": "path",
+                "url": "modules/membership",
+                "reference": "7f8ab0cf44ea7dab65c8e384d736de836ade7c76"
+            },
+            "require": {
+                "php": "^8.4"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Moduloom\\Membership\\MembershipServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Moduloom\\Membership\\": "src/"
+                }
+            },
+            "license": [
+                "proprietary"
+            ],
+            "description": "Membership module — member records with tier and status. No dependencies on any other module.",
+            "transport-options": {
+                "relative": true
+            }
+        },
+        {
             "name": "moduloom/notes",
             "version": "1.0.0",
             "dist": {
@@ -2232,6 +2553,102 @@
             }
         },
         {
+            "name": "moduloom/projects",
+            "version": "1.0.0",
+            "dist": {
+                "type": "path",
+                "url": "modules/projects",
+                "reference": "d94d04e00ff0dc826a9f9fd03a39767fa7878bdd"
+            },
+            "require": {
+                "php": "^8.4"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Moduloom\\Projects\\ProjectsServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Moduloom\\Projects\\": "src/"
+                }
+            },
+            "license": [
+                "proprietary"
+            ],
+            "description": "Projects module — projects with tasks. No dependencies on any other module.",
+            "transport-options": {
+                "relative": true
+            }
+        },
+        {
+            "name": "moduloom/public-information",
+            "version": "1.0.0",
+            "dist": {
+                "type": "path",
+                "url": "modules/public-information",
+                "reference": "4843231824951d94cc74569c9d497deb76a58f31"
+            },
+            "require": {
+                "php": "^8.4"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Moduloom\\PublicInformation\\PublicInformationServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Moduloom\\PublicInformation\\": "src/"
+                }
+            },
+            "license": [
+                "proprietary"
+            ],
+            "description": "Public information module — published notices with a public render route. No dependencies on any other module.",
+            "transport-options": {
+                "relative": true
+            }
+        },
+        {
+            "name": "moduloom/records",
+            "version": "1.0.0",
+            "dist": {
+                "type": "path",
+                "url": "modules/records",
+                "reference": "d94780d68f25a0e0ae558289b194e5cf4b0e460b"
+            },
+            "require": {
+                "php": "^8.4"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Moduloom\\Records\\RecordsServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Moduloom\\Records\\": "src/"
+                }
+            },
+            "license": [
+                "proprietary"
+            ],
+            "description": "Records module — searchable public record entries with a redaction flag. No dependencies on any other module.",
+            "transport-options": {
+                "relative": true
+            }
+        },
+        {
             "name": "moduloom/tasks",
             "version": "1.0.0",
             "dist": {
@@ -2291,6 +2708,38 @@
                 "proprietary"
             ],
             "description": "Website module — simple pages with a public-facing render route. No dependencies on any other module.",
+            "transport-options": {
+                "relative": true
+            }
+        },
+        {
+            "name": "moduloom/workflows",
+            "version": "1.0.0",
+            "dist": {
+                "type": "path",
+                "url": "modules/workflows",
+                "reference": "070a47f59b72728003c58b510a26af90625dc329"
+            },
+            "require": {
+                "php": "^8.4"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Moduloom\\Workflows\\WorkflowsServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Moduloom\\Workflows\\": "src/"
+                }
+            },
+            "license": [
+                "proprietary"
+            ],
+            "description": "Workflows module — approval requests with a status. No dependencies on any other module. Reused by both the Enterprise and Government profiles.",
             "transport-options": {
                 "relative": true
             }

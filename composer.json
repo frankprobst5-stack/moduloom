@@ -22,7 +22,21 @@
         "moduloom/website": "*",
         "moduloom/crm": "*",
         "moduloom/inventory": "*",
-        "moduloom/invoicing": "*"
+        "moduloom/invoicing": "*",
+        "moduloom/forums": "*",
+        "moduloom/membership": "*",
+        "moduloom/events": "*",
+        "moduloom/directories": "*",
+        "moduloom/classrooms": "*",
+        "moduloom/assignments": "*",
+        "moduloom/knowledge-base": "*",
+        "moduloom/documents": "*",
+        "moduloom/workflows": "*",
+        "moduloom/projects": "*",
+        "moduloom/applications": "*",
+        "moduloom/public-information": "*",
+        "moduloom/forms": "*",
+        "moduloom/records": "*"
     },
     "require-dev": {
         "fakerphp/faker": "^1.23",

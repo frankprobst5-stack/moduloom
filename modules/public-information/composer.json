@@ -1,0 +1,22 @@
+{
+    "name": "moduloom/public-information",
+    "description": "Public information module — published notices with a public render route. No dependencies on any other module.",
+    "type": "library",
+    "version": "1.0.0",
+    "license": "proprietary",
+    "require": {
+        "php": "^8.4"
+    },
+    "autoload": {
+        "psr-4": {
+            "Moduloom\\PublicInformation\\": "src/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Moduloom\\PublicInformation\\PublicInformationServiceProvider"
+            ]
+        }
+    }
+}

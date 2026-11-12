@@ -1,0 +1,23 @@
+{
+    "name": "moduloom/assignments",
+    "description": "Assignments module — assignments scoped to a classroom. Requires classrooms.",
+    "type": "library",
+    "version": "1.0.0",
+    "license": "proprietary",
+    "require": {
+        "php": "^8.4",
+        "moduloom/classrooms": "*"
+    },
+    "autoload": {
+        "psr-4": {
+            "Moduloom\\Assignments\\": "src/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Moduloom\\Assignments\\AssignmentsServiceProvider"
+            ]
+        }
+    }
+}
