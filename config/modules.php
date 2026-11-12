@@ -3,9 +3,13 @@
 use Moduloom\Notes\Manifest;
 
 // Module registry: slug => its manifest class. Manual for now — one
-// entry, added by hand per module. Auto-discovery (scanning installed
+// entry per module, added by hand. Auto-discovery (scanning installed
 // moduloom/* Composer packages for a manifest class) is a reasonable
-// later improvement, not required to prove the Phase 1 loop.
+// later improvement, not required to prove the Phase 1/2 loops.
 return [
     'notes' => Manifest::class,
+    'tasks' => Moduloom\Tasks\Manifest::class,
+    'files' => Moduloom\Files\Manifest::class,
+    'personal-databases' => Moduloom\PersonalDatabases\Manifest::class,
+    'website' => Moduloom\Website\Manifest::class,
 ];

@@ -15,7 +15,11 @@
         "php": "^8.4",
         "laravel/framework": "^13.17",
         "laravel/tinker": "^3.0",
-        "moduloom/notes": "*"
+        "moduloom/notes": "*",
+        "moduloom/tasks": "*",
+        "moduloom/files": "*",
+        "moduloom/personal-databases": "*",
+        "moduloom/website": "*"
     },
     "require-dev": {
         "fakerphp/faker": "^1.23",

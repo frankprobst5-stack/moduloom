@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "92b9c75172a6307b25b8b4069e840b40",
+    "content-hash": "667853414e9030bb5132c34fb8fa1376",
     "packages": [
         {
             "name": "brick/math",
@@ -2039,6 +2039,38 @@
             "time": "2026-11-04T12:45:07+00:00"
         },
         {
+            "name": "moduloom/files",
+            "version": "1.0.0",
+            "dist": {
+                "type": "path",
+                "url": "modules/files",
+                "reference": "c4a93817cc0205219e8eb87dd6df4877e65b5a33"
+            },
+            "require": {
+                "php": "^8.4"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Moduloom\\Files\\FilesServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Moduloom\\Files\\": "src/"
+                }
+            },
+            "license": [
+                "proprietary"
+            ],
+            "description": "Files module — real uploaded-file storage, no dependencies on any other module.",
+            "transport-options": {
+                "relative": true
+            }
+        },
+        {
             "name": "moduloom/notes",
             "version": "1.0.0",
             "dist": {
@@ -2066,6 +2098,102 @@
                 "proprietary"
             ],
             "description": "Notes module — plain text notes, no dependencies on any other module.",
+            "transport-options": {
+                "relative": true
+            }
+        },
+        {
+            "name": "moduloom/personal-databases",
+            "version": "1.0.0",
+            "dist": {
+                "type": "path",
+                "url": "modules/personal-databases",
+                "reference": "470ddba5f564145b4cd418fad51cba291e606b86"
+            },
+            "require": {
+                "php": "^8.4"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Moduloom\\PersonalDatabases\\PersonalDatabasesServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Moduloom\\PersonalDatabases\\": "src/"
+                }
+            },
+            "license": [
+                "proprietary"
+            ],
+            "description": "Personal databases module — named collections of free-form JSON records. Scoped down from the full NocoDB-style dynamic schema builder in the long-term vision; this is the minimal real version: collections and JSON records, no user-defined column types yet.",
+            "transport-options": {
+                "relative": true
+            }
+        },
+        {
+            "name": "moduloom/tasks",
+            "version": "1.0.0",
+            "dist": {
+                "type": "path",
+                "url": "modules/tasks",
+                "reference": "e611972ef46921bd77aa51b87e41bc1f48fb7c69"
+            },
+            "require": {
+                "php": "^8.4"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Moduloom\\Tasks\\TasksServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Moduloom\\Tasks\\": "src/"
+                }
+            },
+            "license": [
+                "proprietary"
+            ],
+            "description": "Tasks module — simple to-dos, no dependencies on any other module.",
+            "transport-options": {
+                "relative": true
+            }
+        },
+        {
+            "name": "moduloom/website",
+            "version": "1.0.0",
+            "dist": {
+                "type": "path",
+                "url": "modules/website",
+                "reference": "c7c6fe1a82d52a74ff33c55ce7c14d6b633db5a3"
+            },
+            "require": {
+                "php": "^8.4"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Moduloom\\Website\\WebsiteServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Moduloom\\Website\\": "src/"
+                }
+            },
+            "license": [
+                "proprietary"
+            ],
+            "description": "Website module — simple pages with a public-facing render route. No dependencies on any other module.",
             "transport-options": {
                 "relative": true
             }

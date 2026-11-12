@@ -10,7 +10,14 @@ export default defineConfig({
             input: [
                 'resources/css/app.css',
                 'resources/js/app.js',
+                'resources/js/shell/picker-entry.tsx',
+                'resources/js/shell/onboarding-entry.tsx',
+                'resources/js/shell/dashboard-entry.tsx',
                 'resources/js/modules/notes/admin.tsx',
+                'resources/js/modules/tasks/admin.tsx',
+                'resources/js/modules/files/admin.tsx',
+                'resources/js/modules/personal-databases/admin.tsx',
+                'resources/js/modules/website/admin.tsx',
             ],
             refresh: true,
             fonts: [
