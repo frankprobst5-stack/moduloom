@@ -3,7 +3,7 @@
     "description": "Assignments module — assignments scoped to a classroom. Requires classrooms.",
     "type": "library",
     "version": "1.0.0",
-    "license": "proprietary",
+    "license": "AGPL-3.0-or-later",
     "require": {
         "php": "^8.4",
         "moduloom/classrooms": "*"

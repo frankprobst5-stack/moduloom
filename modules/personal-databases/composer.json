@@ -3,7 +3,7 @@
     "description": "Personal databases module — named collections of free-form JSON records. Scoped down from the full NocoDB-style dynamic schema builder in the long-term vision; this is the minimal real version: collections and JSON records, no user-defined column types yet.",
     "type": "library",
     "version": "1.0.0",
-    "license": "proprietary",
+    "license": "AGPL-3.0-or-later",
     "require": {
         "php": "^8.4"
     },

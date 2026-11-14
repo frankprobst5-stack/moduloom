@@ -3,7 +3,7 @@
     "description": "Invoicing module — invoices optionally tied to a CRM contact. Requires crm.",
     "type": "library",
     "version": "1.0.0",
-    "license": "proprietary",
+    "license": "AGPL-3.0-or-later",
     "require": {
         "php": "^8.4",
         "moduloom/crm": "*"

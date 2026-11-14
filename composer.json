@@ -4,7 +4,7 @@
     "type": "project",
     "description": "Modular open-source application platform — one platform, many ecosystems.",
     "keywords": ["laravel", "modular", "cms"],
-    "license": "proprietary",
+    "license": "AGPL-3.0-or-later",
     "repositories": [
         {
             "type": "path",
