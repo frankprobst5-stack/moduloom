@@ -6,13 +6,10 @@ use App\Kernel\Reconciler;
 use App\Models\InstalledModule;
 use App\Models\ModuleReference;
 use App\Models\Role;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
 class ReconcilerTest extends TestCase
 {
-    use RefreshDatabase;
-
     private Reconciler $reconciler;
 
     protected function setUp(): void

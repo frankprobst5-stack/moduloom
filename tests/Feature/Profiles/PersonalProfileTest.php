@@ -7,7 +7,6 @@ use App\Models\InstalledModule;
 use App\Models\ProfileInstallHistory;
 use App\Models\Role;
 use App\Models\RoleCapabilityGrant;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 use Tests\TestCase;
@@ -19,8 +18,6 @@ use Tests\TestCase;
  */
 class PersonalProfileTest extends TestCase
 {
-    use RefreshDatabase;
-
     public function test_installing_personal_provisions_every_module_and_the_owner_role(): void
     {
         app(ProfileInstaller::class)->install('personal', 'test');

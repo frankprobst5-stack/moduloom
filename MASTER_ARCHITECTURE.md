@@ -158,6 +158,11 @@ profile_install_history
   version
   installed_at
   installed_by
+
+theme_selections
+  theme_slug
+  set_by             -- which profile/action set this
+  -- append-only; the active theme is whichever row is latest
 ```
 
 A module's own internal schema (its own tables, its own migrations) lives
@@ -185,15 +190,59 @@ A profile manifest describes:
 - `role_grants`: capability grants it attaches to roles it creates or
   finds already present
 
+## Theme system (resolved, Phase 5)
+
+A theme governs **only public-facing pages** — the views a visitor
+reaches without being in the app (Website's `/site/{slug}`, Knowledge
+base's `/kb/{slug}`, Public information's `/notices`). It never touches
+the admin shell: the dashboard, the setup wizard, and every module's own
+admin screen look the same regardless of which theme is active.
+
+This isn't just convention-following (though it does match WordPress's
+theme/wp-admin split, and the fact that Directus, Strapi, NocoDB, and
+Appsmith all keep one fixed admin chrome regardless of what the public
+output looks like). It's forced by something Phase 3 already proved:
+once ecosystems evolve together, there is no single "current ecosystem"
+left to theme a *shared* dashboard by. An instance with Personal, Small
+Business, and Community all installed has one dashboard, used by
+whichever modules happen to be active — there's no coherent answer to
+"whose theme wins" at that layer. Public-facing module output doesn't
+have that problem: each page is produced by one specific module, and an
+instance's visitor-facing surface can meaningfully share one consistent
+look across all of them.
+
+Mechanically:
+- A theme is a directory under `resources/views/themes/{slug}/` with a
+  `layout.blade.php` — presentation only, no migrations, no
+  capabilities, not a module and not a profile.
+- **Instance-scoped**, not per-module or per-ecosystem: `theme_selections`
+  is an append-only table (same idiom as `profile_install_history`) —
+  the active theme is whichever row is latest. Switching themes appends
+  a row rather than updating one in place, which gives a free history
+  at no extra cost.
+- **Adopted non-destructively**: a profile's `themeSlug()` is adopted as
+  the instance default only if no theme has ever been chosen yet. A
+  later profile installed on top never silently changes a look the
+  owner (or an earlier profile) already has — the same rule invariant 2
+  applies to module configuration, applied here to presentation.
+- **Explicitly switchable** afterward, from the dashboard. An explicit
+  switch to a theme with no real layout on disk is refused outright
+  (loud failure, not a silent no-op) — but every profile's `themeSlug()`
+  names a theme that may not have a real design built yet, and that gap
+  has to degrade gracefully rather than 500: rendering a public page
+  falls back to the built-in `default` theme whenever the active slug
+  has no `layout.blade.php` on disk.
+- A module's public-facing controller never returns `view(...)`
+  directly for a page a visitor will see — it wraps that content view
+  through `App\Kernel\ThemeManager::wrap()`, which renders it inside
+  the active theme's layout.
+
 ## OPEN questions (deliberately unresolved)
 
 - Exact format and validation story for module/profile manifests (JSON?
   PHP array returned from a service provider? versioned schema?).
 - How an orphaned module's data is eventually, optionally, purged — and
   by whom.
-- Theme system: how a profile's "starter theme" relates to a module's own
-  front-end templates, and how far theme overriding goes per-module vs.
-  site-wide.
 - Multi-tenancy: is one Moduloom install always one organization, or can
   a single deployment host multiple independent instances?
 - Authentication/session model details beyond "roles are instance-scoped."

@@ -8,7 +8,6 @@ use App\Models\InstalledModule;
 use App\Models\ModuleReference;
 use App\Models\Role;
 use App\Models\RoleCapabilityGrant;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
 /**
@@ -20,8 +19,6 @@ use Tests\TestCase;
  */
 class RemainingEcosystemsTest extends TestCase
 {
-    use RefreshDatabase;
-
     public function test_community_installs_all_four_of_its_modules(): void
     {
         app(ProfileInstaller::class)->install('community', 'owner');

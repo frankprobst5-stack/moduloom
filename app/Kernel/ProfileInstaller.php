@@ -23,6 +23,7 @@ class ProfileInstaller
     public function __construct(
         private readonly ModuleInstaller $moduleInstaller,
         private readonly Reconciler $reconciler,
+        private readonly ThemeManager $themeManager,
     ) {}
 
     public function manifestFor(string $profileSlug): ProfileManifest
@@ -69,6 +70,8 @@ class ProfileInstaller
             'installed_by' => $installedBy,
             'installed_at' => now(),
         ]);
+
+        $this->themeManager->adoptDefaultIfUnset($manifest->themeSlug(), $manifest->slug());
 
         return $manifest;
     }

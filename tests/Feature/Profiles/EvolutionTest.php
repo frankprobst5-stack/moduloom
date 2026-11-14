@@ -8,7 +8,6 @@ use App\Models\InstalledModule;
 use App\Models\ModuleReference;
 use App\Models\Role;
 use App\Models\RoleCapabilityGrant;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use Moduloom\Notes\Models\Note;
 use Moduloom\Tasks\Models\Task;
 use Moduloom\Website\Models\WebsitePage;
@@ -23,8 +22,6 @@ use Tests\TestCase;
  */
 class EvolutionTest extends TestCase
 {
-    use RefreshDatabase;
-
     public function test_small_business_installs_on_top_of_personal_without_touching_any_of_it(): void
     {
         $installer = app(ProfileInstaller::class);

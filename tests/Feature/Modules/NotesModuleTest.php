@@ -5,7 +5,6 @@ namespace Tests\Feature\Modules;
 use App\Kernel\ModuleInstaller;
 use App\Kernel\Reconciler;
 use App\Models\InstalledModule;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Schema;
 use Moduloom\Notes\Models\Note;
 use Tests\Support\FakeDependentManifest;
@@ -20,8 +19,6 @@ use Tests\TestCase;
  */
 class NotesModuleTest extends TestCase
 {
-    use RefreshDatabase;
-
     private ModuleInstaller $installer;
 
     protected function setUp(): void
