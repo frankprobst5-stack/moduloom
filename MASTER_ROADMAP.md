@@ -97,10 +97,30 @@ remaining ecosystems are mostly module-writing, not architecture work:
       your current profile bundled, with real install/uninstall through
       the same ModuleInstaller/Reconciler path profiles use. Verified live:
       installed Forums standalone with no profile involved, fully usable.
-- [ ] Security review, deployment documentation for shared hosting
-- [ ] Decide public visibility (this repo starts private; the same
-      due-diligence pass given to Stratum and SnapPress before they went
-      public applies here too, once there's a real codebase to audit)
+- [x] Security review — see SECURITY.md. Found and fixed one real
+      vulnerability (unrestricted file uploads in Files/Documents, a real
+      path to stored XSS or RCE on shared hosting; fixed with a content
+      allowlist, proven by tests/Feature/Security/FileUploadRestrictionTest.php).
+      Surfaced the one genuine blocker: there is no authentication or
+      authorization enforcement anywhere in the app yet — deliberately
+      deferred since Phase 0, not an oversight, but it has to become its
+      own phase (Phase 6) before public visibility is acted on for
+      anything beyond a local demo.
+- [x] Deployment documentation for shared hosting — see DEPLOYMENT.md.
+- [ ] Decide public visibility — blocked on Phase 6 (authentication) per
+      SECURITY.md's critical finding. The same due-diligence pass given
+      to Stratum and SnapPress before they went public still applies once
+      that's resolved.
+
+## Phase 6 — Authentication & authorization (newly identified, Phase 5's security review)
+
+Not optional before any real deployment. A real design task, not a quick
+addition — how a logged-in identity maps to the Owner/Staff/Customer
+roles already modeled and tested since Phase 2, session vs. token auth,
+and whether Customer-role users (forum members, students, citizens)
+get full accounts or something lighter. Building this without deliberate
+design would fight invariant 3's instance-scoped roles instead of using
+them.
 
 ## Explicitly deferred, not forgotten
 

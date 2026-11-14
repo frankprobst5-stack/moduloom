@@ -19,8 +19,15 @@ class FileController extends Controller
 
     public function store(Request $request)
     {
+        // Extension/content allowlist, not just a size cap. Unrestricted
+        // uploads are a real path to stored XSS (an uploaded .html file
+        // served back verbatim) or worse on shared hosting where PHP
+        // execution can't always be disabled per-directory — Laravel's
+        // `mimes` rule sniffs real file content, not just the
+        // client-supplied extension, so a renamed .php can't pass as
+        // .pdf.
         $request->validate([
-            'file' => ['required', 'file', 'max:10240'],
+            'file' => ['required', 'file', 'max:10240', 'mimes:pdf,doc,docx,xls,xlsx,ppt,pptx,png,jpg,jpeg,gif,txt,csv,zip'],
         ]);
 
         $upload = $request->file('file');

@@ -19,7 +19,13 @@ class DocumentController extends Controller
 
     public function store(Request $request)
     {
-        $request->validate(['file' => ['required', 'file', 'max:10240']]);
+        // See Moduloom\Files\Http\Controllers\FileController — same
+        // extension/content allowlist, same reasoning: an unrestricted
+        // upload is a real path to stored XSS or worse on shared
+        // hosting.
+        $request->validate([
+            'file' => ['required', 'file', 'max:10240', 'mimes:pdf,doc,docx,xls,xlsx,ppt,pptx,png,jpg,jpeg,gif,txt,csv,zip'],
+        ]);
 
         $upload = $request->file('file');
         $path = $upload->store('documents', 'public');
