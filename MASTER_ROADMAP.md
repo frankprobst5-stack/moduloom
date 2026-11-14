@@ -107,10 +107,16 @@ remaining ecosystems are mostly module-writing, not architecture work:
       own phase (Phase 6) before public visibility is acted on for
       anything beyond a local demo.
 - [x] Deployment documentation for shared hosting — see DEPLOYMENT.md.
-- [ ] Decide public visibility — blocked on Phase 6 (authentication) per
-      SECURITY.md's critical finding. The same due-diligence pass given
-      to Stratum and SnapPress before they went public still applies once
-      that's resolved.
+- [x] Decide public visibility — public. The repo and the running kernel
+      are different things: making the *source* public carries none of the
+      risk a live, publicly-reachable deployment would. Did the same
+      due-diligence pass Stratum and SnapPress got first (secret audit,
+      dead-code/stale-doc check, and — found missing here — a real license:
+      AGPL-3.0-or-later with a Section 7 exception for third-party modules/
+      profiles/themes, since MASTER_VISION.md said "open-source" but nothing
+      had actually granted a license yet). SECURITY.md's finding still
+      stands and is now prominent in the README: do not deploy a live
+      instance publicly until Phase 6 (authentication) is done.
 
 ## Phase 6 — Authentication & authorization (newly identified, Phase 5's security review)
 
