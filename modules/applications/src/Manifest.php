@@ -40,4 +40,14 @@ class Manifest implements ModuleManifest
             ['slug' => 'applications.view', 'label' => 'Submit and view own applications'],
         ];
     }
+
+    public function description(): string
+    {
+        return 'Review submitted applications.';
+    }
+
+    public function category(): string
+    {
+        return 'Enterprise';
+    }
 }

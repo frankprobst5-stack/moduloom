@@ -40,4 +40,14 @@ class Manifest implements ModuleManifest
             ['slug' => 'forums.view', 'label' => 'View and post in forums'],
         ];
     }
+
+    public function description(): string
+    {
+        return 'Threaded discussion boards.';
+    }
+
+    public function category(): string
+    {
+        return 'Community';
+    }
 }

@@ -42,4 +42,14 @@ class Manifest implements ModuleManifest
             ['slug' => 'assignments.view', 'label' => 'View and submit assignments'],
         ];
     }
+
+    public function description(): string
+    {
+        return 'Assignments and student submissions.';
+    }
+
+    public function category(): string
+    {
+        return 'Education';
+    }
 }

@@ -40,4 +40,20 @@ interface ModuleManifest
      * @return array<int, array{slug: string, label: string}>
      */
     public function capabilities(): array;
+
+    /**
+     * A short, end-user-facing one-liner for the module marketplace —
+     * what it does, not how it's built. Distinct from composer.json's
+     * own `description`, which is written for a developer reading the
+     * package listing, not a user browsing a marketplace card.
+     */
+    public function description(): string;
+
+    /**
+     * Groups this module in the marketplace (Content, Commerce,
+     * Community, Education, Enterprise, Government, Productivity).
+     * Display grouping only — the kernel never filters or gates
+     * anything by category.
+     */
+    public function category(): string;
 }

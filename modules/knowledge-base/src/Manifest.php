@@ -39,4 +39,14 @@ class Manifest implements ModuleManifest
             ['slug' => 'knowledge_base.manage', 'label' => 'Manage knowledge base articles'],
         ];
     }
+
+    public function description(): string
+    {
+        return 'Published help articles.';
+    }
+
+    public function category(): string
+    {
+        return 'Education';
+    }
 }

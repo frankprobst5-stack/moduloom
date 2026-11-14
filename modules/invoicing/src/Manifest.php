@@ -44,4 +44,14 @@ class Manifest implements ModuleManifest
             ['slug' => 'invoicing.view', 'label' => 'View own invoices'],
         ];
     }
+
+    public function description(): string
+    {
+        return 'Quotes, invoices, and payment status.';
+    }
+
+    public function category(): string
+    {
+        return 'Commerce';
+    }
 }

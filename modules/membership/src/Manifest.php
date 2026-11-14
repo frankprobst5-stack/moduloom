@@ -39,4 +39,14 @@ class Manifest implements ModuleManifest
             ['slug' => 'membership.manage', 'label' => 'Manage memberships'],
         ];
     }
+
+    public function description(): string
+    {
+        return 'Member records with tiers and status.';
+    }
+
+    public function category(): string
+    {
+        return 'Community';
+    }
 }

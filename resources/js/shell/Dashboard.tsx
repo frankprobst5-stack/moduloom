@@ -52,6 +52,12 @@ export default function Dashboard() {
                         {entry.label}
                     </a>
                 ))}
+                <a
+                    href="/marketplace"
+                    style={{ display: 'block', color: '#9ca3af', textDecoration: 'none', padding: '10px 0 0', marginTop: 10, borderTop: '1px solid #262c38', fontSize: 13 }}
+                >
+                    + Browse modules
+                </a>
             </div>
             <div style={{ flex: 1, padding: 40 }}>
                 <h1 style={{ fontSize: 22 }}>Overview</h1>

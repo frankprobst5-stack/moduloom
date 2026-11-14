@@ -39,4 +39,14 @@ class Manifest implements ModuleManifest
             ['slug' => 'classrooms.manage', 'label' => 'Manage classrooms'],
         ];
     }
+
+    public function description(): string
+    {
+        return 'Classrooms with a student roster.';
+    }
+
+    public function category(): string
+    {
+        return 'Education';
+    }
 }

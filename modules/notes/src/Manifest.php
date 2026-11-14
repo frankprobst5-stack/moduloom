@@ -41,4 +41,14 @@ class Manifest implements ModuleManifest
             ['slug' => 'notes.manage', 'label' => 'Manage notes'],
         ];
     }
+
+    public function description(): string
+    {
+        return 'Quick personal notes.';
+    }
+
+    public function category(): string
+    {
+        return 'Productivity';
+    }
 }

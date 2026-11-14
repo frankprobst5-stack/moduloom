@@ -39,4 +39,14 @@ class Manifest implements ModuleManifest
             ['slug' => 'directories.manage', 'label' => 'Manage directory listings'],
         ];
     }
+
+    public function description(): string
+    {
+        return 'A searchable directory of listings.';
+    }
+
+    public function category(): string
+    {
+        return 'Community';
+    }
 }

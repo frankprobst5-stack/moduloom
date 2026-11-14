@@ -39,4 +39,14 @@ class Manifest implements ModuleManifest
             ['slug' => 'files.manage', 'label' => 'Manage files'],
         ];
     }
+
+    public function description(): string
+    {
+        return 'Upload and organize files.';
+    }
+
+    public function category(): string
+    {
+        return 'Productivity';
+    }
 }

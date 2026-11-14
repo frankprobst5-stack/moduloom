@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\ModuleMarketplaceController;
 use App\Http\Controllers\SetupController;
 use App\Http\Controllers\ThemeController;
 use Illuminate\Support\Facades\Route;
@@ -21,4 +22,10 @@ Route::prefix('dashboard')->group(function () {
 Route::prefix('theme')->group(function () {
     Route::get('/', [ThemeController::class, 'show']);
     Route::post('activate', [ThemeController::class, 'activate']);
+});
+
+Route::prefix('marketplace')->group(function () {
+    Route::get('modules', [ModuleMarketplaceController::class, 'index']);
+    Route::post('install/{slug}', [ModuleMarketplaceController::class, 'install']);
+    Route::post('uninstall/{slug}', [ModuleMarketplaceController::class, 'uninstall']);
 });

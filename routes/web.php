@@ -9,3 +9,4 @@ Route::get('/', function () {
 Route::get('/setup', fn () => view('setup.picker'));
 Route::get('/setup/onboarding', fn () => view('setup.onboarding'));
 Route::get('/dashboard', fn () => view('dashboard'));
+Route::get('/marketplace', fn () => view('marketplace'));

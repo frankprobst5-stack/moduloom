@@ -39,4 +39,14 @@ class Manifest implements ModuleManifest
             ['slug' => 'personal_databases.manage', 'label' => 'Manage personal databases'],
         ];
     }
+
+    public function description(): string
+    {
+        return 'Named collections of flexible records.';
+    }
+
+    public function category(): string
+    {
+        return 'Productivity';
+    }
 }

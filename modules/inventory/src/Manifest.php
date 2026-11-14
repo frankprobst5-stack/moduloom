@@ -39,4 +39,14 @@ class Manifest implements ModuleManifest
             ['slug' => 'inventory.manage', 'label' => 'Manage inventory'],
         ];
     }
+
+    public function description(): string
+    {
+        return 'Stock levels and reorder alerts.';
+    }
+
+    public function category(): string
+    {
+        return 'Commerce';
+    }
 }

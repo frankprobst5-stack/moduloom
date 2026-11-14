@@ -39,4 +39,14 @@ class Manifest implements ModuleManifest
             ['slug' => 'website.manage', 'label' => 'Manage website pages'],
         ];
     }
+
+    public function description(): string
+    {
+        return 'Pages for your public site.';
+    }
+
+    public function category(): string
+    {
+        return 'Content';
+    }
 }

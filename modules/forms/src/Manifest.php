@@ -39,4 +39,14 @@ class Manifest implements ModuleManifest
             ['slug' => 'forms.manage', 'label' => 'Manage forms and submissions'],
         ];
     }
+
+    public function description(): string
+    {
+        return 'Build forms and collect submissions.';
+    }
+
+    public function category(): string
+    {
+        return 'Government';
+    }
 }

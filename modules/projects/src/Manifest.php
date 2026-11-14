@@ -39,4 +39,14 @@ class Manifest implements ModuleManifest
             ['slug' => 'projects.manage', 'label' => 'Manage projects'],
         ];
     }
+
+    public function description(): string
+    {
+        return 'Projects with tasks and assignees.';
+    }
+
+    public function category(): string
+    {
+        return 'Enterprise';
+    }
 }

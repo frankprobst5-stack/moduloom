@@ -39,4 +39,14 @@ class Manifest implements ModuleManifest
             ['slug' => 'crm.manage', 'label' => 'Manage CRM contacts'],
         ];
     }
+
+    public function description(): string
+    {
+        return 'Track contacts and leads.';
+    }
+
+    public function category(): string
+    {
+        return 'Commerce';
+    }
 }

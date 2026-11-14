@@ -39,4 +39,14 @@ class Manifest implements ModuleManifest
             ['slug' => 'events.manage', 'label' => 'Manage events'],
         ];
     }
+
+    public function description(): string
+    {
+        return 'Events with registration.';
+    }
+
+    public function category(): string
+    {
+        return 'Community';
+    }
 }

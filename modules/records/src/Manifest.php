@@ -39,4 +39,14 @@ class Manifest implements ModuleManifest
             ['slug' => 'records.manage', 'label' => 'Manage public records'],
         ];
     }
+
+    public function description(): string
+    {
+        return 'Searchable public records.';
+    }
+
+    public function category(): string
+    {
+        return 'Government';
+    }
 }

@@ -39,4 +39,14 @@ class Manifest implements ModuleManifest
             ['slug' => 'public_information.manage', 'label' => 'Publish public notices'],
         ];
     }
+
+    public function description(): string
+    {
+        return 'Public notices and announcements.';
+    }
+
+    public function category(): string
+    {
+        return 'Government';
+    }
 }

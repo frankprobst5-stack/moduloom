@@ -89,13 +89,18 @@ remaining ecosystems are mostly module-writing, not architecture work:
 
 ## Phase 5 — Marketplace, theming, public readiness
 
-- Module marketplace UI (browse/install beyond your current profile)
-- Theme system resolution (an OPEN item in the architecture doc — must be
-  closed before this phase starts)
-- Security review, deployment documentation for shared hosting
-- Decide public visibility (this repo starts private; the same
-  due-diligence pass given to Stratum and SnapPress before they went
-  public applies here too, once there's a real codebase to audit)
+- [x] Theme system resolution — see MASTER_ARCHITECTURE.md's "Theme
+      system" section. Also surfaced and fixed a real test-isolation bug
+      (RefreshDatabase's transaction rollback silently broken by any test
+      that triggers a module's first-install migration).
+- [x] Module marketplace UI — every registered module, not just the ones
+      your current profile bundled, with real install/uninstall through
+      the same ModuleInstaller/Reconciler path profiles use. Verified live:
+      installed Forums standalone with no profile involved, fully usable.
+- [ ] Security review, deployment documentation for shared hosting
+- [ ] Decide public visibility (this repo starts private; the same
+      due-diligence pass given to Stratum and SnapPress before they went
+      public applies here too, once there's a real codebase to audit)
 
 ## Explicitly deferred, not forgotten
 

@@ -40,4 +40,14 @@ class Manifest implements ModuleManifest
             ['slug' => 'workflows.view', 'label' => 'Submit and view own requests'],
         ];
     }
+
+    public function description(): string
+    {
+        return 'Approval requests with a status.';
+    }
+
+    public function category(): string
+    {
+        return 'Enterprise';
+    }
 }

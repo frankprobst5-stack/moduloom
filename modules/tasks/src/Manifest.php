@@ -39,4 +39,14 @@ class Manifest implements ModuleManifest
             ['slug' => 'tasks.manage', 'label' => 'Manage tasks'],
         ];
     }
+
+    public function description(): string
+    {
+        return 'Simple to-do lists.';
+    }
+
+    public function category(): string
+    {
+        return 'Productivity';
+    }
 }

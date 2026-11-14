@@ -39,4 +39,14 @@ class Manifest implements ModuleManifest
             ['slug' => 'documents.manage', 'label' => 'Manage documents'],
         ];
     }
+
+    public function description(): string
+    {
+        return 'Shared file storage for your team.';
+    }
+
+    public function category(): string
+    {
+        return 'Enterprise';
+    }
 }

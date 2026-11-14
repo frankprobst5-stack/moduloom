@@ -41,4 +41,14 @@ class FakeDependentManifest implements ModuleManifest
     {
         return [];
     }
+
+    public function description(): string
+    {
+        return 'Fake, test-only module.';
+    }
+
+    public function category(): string
+    {
+        return 'Test';
+    }
 }
