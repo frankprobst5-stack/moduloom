@@ -1,9 +1,15 @@
 <?php
 
+use App\Models\ProfileInstallHistory;
 use Illuminate\Support\Facades\Route;
 
+// Never a generic placeholder: a fresh instance goes to the setup
+// wizard, one that's already installed something goes to its own
+// dashboard.
 Route::get('/', function () {
-    return view('welcome');
+    return ProfileInstallHistory::query()->exists()
+        ? redirect('/dashboard')
+        : redirect('/setup');
 });
 
 Route::get('/setup', fn () => view('setup.picker'));

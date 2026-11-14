@@ -1,0 +1,22 @@
+name: moduloom-dev
+
+services:
+  mariadb-dev:
+    image: mariadb:11
+    container_name: moduloom-dev-db
+    restart: unless-stopped
+    ports:
+      - "3308:3306"
+    environment:
+      MARIADB_ROOT_PASSWORD: moduloom
+      MARIADB_DATABASE: moduloom
+    volumes:
+      - moduloom-dev-db-data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  moduloom-dev-db-data:

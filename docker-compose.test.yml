@@ -1,3 +1,5 @@
+name: moduloom-test
+
 services:
   mariadb-test:
     image: mariadb:11
