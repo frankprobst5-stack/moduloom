@@ -3,7 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use Moduloom\Workflows\Http\Controllers\WorkflowRequestController;
 
-Route::middleware(['module.active:workflows'])
+Route::middleware(['module.active:workflows', 'capability:workflows.manage'])
     ->prefix('modules/workflows')
     ->group(function () {
         Route::get('requests', [WorkflowRequestController::class, 'index']);

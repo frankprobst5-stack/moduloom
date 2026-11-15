@@ -3,7 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use Moduloom\Website\Http\Controllers\PageController;
 
-Route::middleware(['module.active:website'])
+Route::middleware(['module.active:website', 'capability:website.manage'])
     ->prefix('modules/website')
     ->group(function () {
         Route::get('pages', [PageController::class, 'index']);

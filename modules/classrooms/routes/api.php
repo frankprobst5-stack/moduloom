@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Route;
 use Moduloom\Classrooms\Http\Controllers\ClassroomController;
 use Moduloom\Classrooms\Http\Controllers\StudentController;
 
-Route::middleware(['module.active:classrooms'])
+Route::middleware(['module.active:classrooms', 'capability:classrooms.manage'])
     ->prefix('modules/classrooms')
     ->group(function () {
         Route::get('classrooms', [ClassroomController::class, 'index']);

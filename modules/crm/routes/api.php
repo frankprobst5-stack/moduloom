@@ -3,7 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use Moduloom\Crm\Http\Controllers\ContactController;
 
-Route::middleware(['module.active:crm'])
+Route::middleware(['module.active:crm', 'capability:crm.manage'])
     ->prefix('modules/crm')
     ->group(function () {
         Route::get('contacts', [ContactController::class, 'index']);

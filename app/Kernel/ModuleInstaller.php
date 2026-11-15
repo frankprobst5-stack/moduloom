@@ -2,7 +2,6 @@
 
 namespace App\Kernel;
 
-use App\Models\Capability;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Artisan;
 use RuntimeException;
@@ -51,12 +50,22 @@ class ModuleInstaller
         }
 
         foreach ($manifest->capabilities() as $capability) {
-            // Module-contributed capabilities exist, but Phase 1 doesn't
-            // grant them to any role yet — that's a profile's job
-            // (invariant 3), and there are no profiles until Phase 2.
-            Capability::firstOrCreate(
-                ['capability_slug' => $capability['slug']],
-                ['label' => $capability['label']],
+            // Phase 1 deferred granting these to anyone — there were no
+            // profiles yet to do it. Phase 6b makes that gap real: a
+            // profile's own roleGrants() cover the capabilities it cares
+            // about, but a module installed standalone (the marketplace,
+            // or a direct ModuleInstaller call) was never granted to
+            // anyone at all, Owner included. Every module's own owner
+            // capability is granted here, unconditionally, as its
+            // baseline — "you installed it, you can manage it" — with a
+            // distinct source per invariant 3, so a profile's own grant
+            // for the same capability coexists rather than conflicts.
+            $this->reconciler->grantCapability(
+                'owner',
+                'Owner',
+                $capability['slug'],
+                $capability['label'],
+                'module:'.$moduleSlug,
             );
         }
     }

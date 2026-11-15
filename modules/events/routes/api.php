@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Route;
 use Moduloom\Events\Http\Controllers\EventController;
 use Moduloom\Events\Http\Controllers\RegistrationController;
 
-Route::middleware(['module.active:events'])
+Route::middleware(['module.active:events', 'capability:events.manage'])
     ->prefix('modules/events')
     ->group(function () {
         Route::get('events', [EventController::class, 'index']);

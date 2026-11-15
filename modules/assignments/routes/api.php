@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Route;
 use Moduloom\Assignments\Http\Controllers\AssignmentController;
 use Moduloom\Assignments\Http\Controllers\SubmissionController;
 
-Route::middleware(['module.active:assignments'])
+Route::middleware(['module.active:assignments', 'capability:assignments.manage'])
     ->prefix('modules/assignments')
     ->group(function () {
         Route::get('assignments', [AssignmentController::class, 'index']);

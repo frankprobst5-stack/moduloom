@@ -3,7 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use Moduloom\Tasks\Http\Controllers\TaskController;
 
-Route::middleware(['module.active:tasks'])
+Route::middleware(['module.active:tasks', 'capability:tasks.manage'])
     ->prefix('modules/tasks')
     ->group(function () {
         Route::get('tasks', [TaskController::class, 'index']);

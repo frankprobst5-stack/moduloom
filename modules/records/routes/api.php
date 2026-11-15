@@ -3,7 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use Moduloom\Records\Http\Controllers\PublicRecordController;
 
-Route::middleware(['module.active:records'])
+Route::middleware(['module.active:records', 'capability:records.manage'])
     ->prefix('modules/records')
     ->group(function () {
         Route::get('records', [PublicRecordController::class, 'index']);

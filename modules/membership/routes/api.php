@@ -3,7 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use Moduloom\Membership\Http\Controllers\MemberController;
 
-Route::middleware(['module.active:membership'])
+Route::middleware(['module.active:membership', 'capability:membership.manage'])
     ->prefix('modules/membership')
     ->group(function () {
         Route::get('members', [MemberController::class, 'index']);

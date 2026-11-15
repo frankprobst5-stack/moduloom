@@ -3,7 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use Moduloom\PublicInformation\Http\Controllers\NoticeController;
 
-Route::middleware(['module.active:public-information'])
+Route::middleware(['module.active:public-information', 'capability:public_information.manage'])
     ->prefix('modules/public-information')
     ->group(function () {
         Route::get('notices', [NoticeController::class, 'index']);

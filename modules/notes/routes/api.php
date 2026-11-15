@@ -3,7 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use Moduloom\Notes\Http\Controllers\NoteController;
 
-Route::middleware(['module.active:notes'])
+Route::middleware(['module.active:notes', 'capability:notes.manage'])
     ->prefix('modules/notes')
     ->group(function () {
         Route::get('notes', [NoteController::class, 'index']);

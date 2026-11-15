@@ -55,7 +55,7 @@ extension, so a `.php` renamed to `.pdf` still fails. Proven by
 `tests/Feature/Security/FileUploadRestrictionTest.php`: a `.php` and a
 `.html` upload are both rejected with 422, a real `.pdf` still succeeds.
 
-## The critical finding — partially resolved (Phase 6a, 2026-11-15)
+## The critical finding — partially resolved (Phase 6a/6b, 2026-11-15)
 
 **Originally: there was no authentication or authorization enforcement
 anywhere in this application.** Every route — every module's admin
@@ -71,18 +71,24 @@ the explicit, named OPEN item in `MASTER_ARCHITECTURE.md`
 instance-scoped'"), carried forward deliberately since Phase 0 rather
 than bolted on half-designed.
 
-**Phase 6a closes the "anyone can reach it" hole.** Every route now
-requires a logged-in session — see `PHASE_6_AUTH_DESIGN.md` for the full
-design and what shipped. What 6a does *not* yet do: distinguish
-Owner/Staff/Customer (it's a single all-or-nothing gate for now), or
-enforce the kernel's existing role/capability grants against who's
-logged in. Those are 6b and 6c, deliberately deferred — see the design
-doc's build order. Building them without that design would mean
-reverting invariant 3's instance-scoped roles into something the auth
-system fights, not works with.
+**Phase 6a closed the "anyone can reach it" hole.** Every route now
+requires a logged-in session. **Phase 6b made that session mean
+something**: the kernel's existing role/capability grants are now
+actually enforced — `EnsureUserHasCapability` sits on every one of the
+22 modules' routes, so holding a session alone isn't enough, holding the
+right role is. See `PHASE_6_AUTH_DESIGN.md` for the full design and what
+shipped in each.
 
-**Recommendation:** 6a is enough to stop the worst case (a totally
-anonymous stranger operating the instance), but a deployment with real
-multiple users (Staff who shouldn't have Owner's reach, Customers who
-should only see their own records) still needs 6b/6c first. Everything
-else in this review is in genuinely good shape.
+What's still missing: a way for an Owner to actually create a Staff
+account and assign it a role — the enforcement is real and complete,
+but there's no invite/create-user flow anywhere in the app yet, so every
+account today is functionally an Owner. That, plus the Customer tier
+(6c: self-serve/invited accounts, row-level ownership on
+Invoicing/Applications/Assignments/Workflows), are what's left.
+
+**Recommendation:** 6a+6b together are enough for a single-admin
+deployment (no anonymous access, and the capability model isn't just
+decorative anymore). A deployment with real multiple users — Staff who
+shouldn't have Owner's reach, Customers who should only see their own
+records — still needs the Staff account-creation flow and 6c first.
+Everything else in this review is in genuinely good shape.

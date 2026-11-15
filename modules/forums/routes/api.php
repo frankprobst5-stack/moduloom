@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Route;
 use Moduloom\Forums\Http\Controllers\ReplyController;
 use Moduloom\Forums\Http\Controllers\ThreadController;
 
-Route::middleware(['module.active:forums'])
+Route::middleware(['module.active:forums', 'capability:forums.manage'])
     ->prefix('modules/forums')
     ->group(function () {
         Route::get('threads', [ThreadController::class, 'index']);

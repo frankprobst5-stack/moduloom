@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Route;
 use Moduloom\PersonalDatabases\Http\Controllers\CollectionController;
 use Moduloom\PersonalDatabases\Http\Controllers\RecordController;
 
-Route::middleware(['module.active:personal-databases'])
+Route::middleware(['module.active:personal-databases', 'capability:personal_databases.manage'])
     ->prefix('modules/personal-databases')
     ->group(function () {
         Route::get('collections', [CollectionController::class, 'index']);

@@ -143,7 +143,11 @@ class ReconcilerTest extends TestCase
 
         $this->assertTrue($this->reconciler->roleHasCapability('customer', 'invoices.view'));
         $this->assertTrue($this->reconciler->roleHasCapability('customer', 'forums.view'));
-        $this->assertSame(1, Role::count(), 'only one Customer role row must ever exist');
+        $this->assertSame(
+            1,
+            Role::where('role_slug', 'customer')->count(),
+            'only one Customer role row must ever exist',
+        );
     }
 
     /**

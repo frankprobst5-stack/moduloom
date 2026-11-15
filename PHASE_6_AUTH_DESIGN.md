@@ -107,18 +107,15 @@ single-user local instance adds friction the other five ecosystems
 don't share this problem with. Two reasonable paths, and this is a
 product call, not an engineering one — see the question below.
 
-## Suggested build order
+## Build order
 
-- **6a — close the hole.** Session login/logout, Owner-only, applied
-  globally (every `/api/*` and admin route requires an authenticated
-  Owner or Staff). This alone resolves `SECURITY.md`'s critical finding
-  and is the minimum before any non-local deployment.
-- **6b — capability enforcement.** `user_role_assignments` table, the
-  `EnsureUserHasCapability` middleware wired into each module's routes,
-  Staff role support end-to-end.
+- **6a — close the hole. Shipped 2026-11-15.** Session login/logout,
+  applied globally. See "What 6a actually shipped" above.
+- **6b — capability enforcement. Shipped 2026-11-15.** See "What 6b
+  actually shipped" below.
 - **6c — Customer tier.** Self-serve/invited Customer accounts, plus the
   ownership columns and row-level scoping on Invoicing, Applications,
-  Assignments, and Workflows.
+  Assignments, and Workflows. Not started.
 - **Deferred candidates (not blocking a real deployment):** password
   reset flow, email verification, invite-link UX polish — real work, but
   none of it is the thing standing between here and "safe to deploy."
@@ -184,3 +181,73 @@ Verified live end-to-end in the browser against the real persistent dev
 instance: fresh install → register → setup → dashboard (nav and theme
 panel both load real data) → log out → `/dashboard` bounces to `/login`
 → log back in.
+
+## What 6b actually shipped
+
+- `user_role_assignments` (`user_id`, `role_slug`, many-to-many) links
+  identity to the roles that already existed. `User::roles()`,
+  `Role::users()`, and `User::hasCapability(string $slug): bool` (true
+  if any assigned role has a grant for it) are the only new query
+  surface.
+- `EnsureUserHasCapability` (alias `capability`) sits alongside
+  `module.active` on every one of the 22 modules' own route files —
+  `Route::middleware(['module.active:notes', 'capability:notes.manage'])`
+  — not a central kernel-wide map, same reasoning as `module.active`
+  itself: the requirement stays next to the route it guards.
+- `AuthController::register` now also does `Role::firstOrCreate('owner')`
+  and assigns the new user to it — the 'owner' role_slug is shared
+  across every profile (invariant 3), and registration is simply the
+  first thing in the instance's life that needs it to exist.
+
+**Real gap found and fixed, not anticipated in the design above:**
+`ModuleManifest::capabilities()` has existed since Phase 1, but nothing
+ever granted those capabilities to anyone — a comment in
+`ModuleInstaller` said as much, correctly, at the time ("Phase 1 doesn't
+grant them to any role yet — that's a profile's job... there are no
+profiles until Phase 2"). Five phases later that deferral had become a
+live bug: a module installed standalone — through the marketplace, or a
+direct `ModuleInstaller::install()` call — was never granted to anyone,
+Owner included, because only a *profile's* `roleGrants()` ever attached
+capability grants. Enforcing capabilities for real (this phase) turned
+a silent gap into every marketplace-only module being unusable by
+everyone. Fixed at the source: `ModuleInstaller::install()` now grants
+the module's own declared capabilities to `owner` unconditionally,
+sourced as `module:{slug}` — a distinct source from any profile's own
+grant for the same capability, so they coexist (invariant 3) rather than
+conflict, and non-destructive on uninstall (an orphaned module's grant
+survives, same rule as the module row itself; `module.active` alone
+still blocks real access). `tests/Feature/Kernel/CapabilityEnforcementTest.php`
+covers this directly; `EvolutionTest`'s existing assertions about exactly
+which sources grant `website.manage`/`crm.manage` were updated to
+include it, not relaxed.
+
+**What "Staff role support" means today, precisely:** the enforcement
+mechanism is real and complete — a user assigned to `staff` is granted
+or refused exactly per that role's capability grants, same as `owner`.
+What doesn't exist yet is any way for an Owner to actually create a
+Staff account and assign them the role — there is no invite/create-user
+flow anywhere in the app. That's real, separate UI and controller work
+(and its own small design question: set-password-directly vs.
+email-invite vs. temp-password), deliberately not bundled into this
+pass. Until it exists, every registered account is functionally an
+Owner, which is honest for a single-admin instance but not yet
+"Staff support end-to-end."
+
+58/58 tests pass (56 prior + 2 new in `CapabilityEnforcementTest`), and
+the standalone-module gap was verified closed live against the real dev
+instance via `curl` with a real session cookie: installing `notes`
+through `/api/marketplace/install/notes` as the existing Owner, then
+immediately calling `/api/modules/notes/notes`, returns 200 — not the
+403 it would have returned before the `ModuleInstaller` fix. The
+migration also backfills: an instance that registered its owner under
+6a, before this table existed, has that existing user assigned to
+`owner` automatically — verified on the real persistent dev instance,
+not just a fresh test database.
+
+## Open follow-ups
+
+- CSRF on `/api/*` (noted under 6a).
+- A Staff invite/create-account flow (noted under 6b) — the missing
+  piece between "capability enforcement works" and "Staff support
+  end-to-end."
+- 6c, not started: Customer tier and row-level ownership.

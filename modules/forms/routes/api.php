@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Route;
 use Moduloom\Forms\Http\Controllers\FormSubmissionController;
 use Moduloom\Forms\Http\Controllers\FormTemplateController;
 
-Route::middleware(['module.active:forms'])
+Route::middleware(['module.active:forms', 'capability:forms.manage'])
     ->prefix('modules/forms')
     ->group(function () {
         Route::get('templates', [FormTemplateController::class, 'index']);

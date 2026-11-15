@@ -137,8 +137,21 @@ them.
       tests passing, verified live end-to-end against the real dev
       instance. No Owner/Staff/Customer distinction yet — single
       all-or-nothing gate.
-- [ ] 6b — `user_role_assignments`, capability-checking middleware wired
-      per module route, Staff role support.
+- [x] 6b shipped 2026-11-15 — `user_role_assignments` links identity to
+      role, `capability:{slug}` middleware wired onto all 22 modules'
+      own routes alongside `module.active`, registration assigns the
+      new owner role. Found and fixed a real gap along the way: a
+      module installed standalone (marketplace, or direct
+      `ModuleInstaller::install()`) was never granted to anyone —
+      `ModuleManifest::capabilities()` has existed since Phase 1 but
+      nothing ever consumed it. Fixed at `ModuleInstaller`, not patched
+      around. 58/58 tests passing, verified live against the real dev
+      instance (including the migration's backfill of the existing
+      pre-6b account to Owner).
+- [ ] 6b, not yet done: a Staff invite/create-account flow. The
+      capability check is real and complete; there's just no UI yet for
+      an Owner to create a second account and assign it a role — every
+      account today is functionally an Owner.
 - [ ] 6c — Customer tier: self-serve/invited accounts, row-level
       ownership on Invoicing/Applications/Assignments/Workflows.
 - [ ] Known follow-up from 6a: `/api/*` has no CSRF check yet (relies on

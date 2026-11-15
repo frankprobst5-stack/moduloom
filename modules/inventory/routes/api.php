@@ -3,7 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use Moduloom\Inventory\Http\Controllers\InventoryItemController;
 
-Route::middleware(['module.active:inventory'])
+Route::middleware(['module.active:inventory', 'capability:inventory.manage'])
     ->prefix('modules/inventory')
     ->group(function () {
         Route::get('items', [InventoryItemController::class, 'index']);

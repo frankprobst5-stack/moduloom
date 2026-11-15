@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Middleware\EnsureModuleIsActive;
+use App\Http\Middleware\EnsureUserHasCapability;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
@@ -16,6 +17,7 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->alias([
             'module.active' => EnsureModuleIsActive::class,
+            'capability' => EnsureUserHasCapability::class,
         ]);
 
         // Phase 6a: every API route — routes/api.php and every module's

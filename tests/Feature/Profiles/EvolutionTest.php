@@ -60,11 +60,13 @@ class EvolutionTest extends TestCase
         );
 
         // Owner is the SAME role row both profiles grant to — extended,
-        // not redefined. website.manage now has two distinct sources,
-        // because both profiles independently grant it.
+        // not redefined. website.manage now has three distinct sources:
+        // ModuleInstaller's own baseline grant (every module grants its
+        // owner capability to whoever installs it, Phase 6b), plus each
+        // profile independently granting it too.
         $this->assertSame(1, Role::where('role_slug', 'owner')->count());
         $this->assertEqualsCanonicalizing(
-            ['personal', 'small-business'],
+            ['module:website', 'personal', 'small-business'],
             RoleCapabilityGrant::where('role_slug', 'owner')->where('capability_slug', 'website.manage')
                 ->pluck('granted_by_source')->toArray(),
         );
@@ -118,20 +120,31 @@ class EvolutionTest extends TestCase
         $this->assertSame('active', InstalledModule::find('website')?->status);
         $this->assertSame(1, $reconciler->referenceCount('website'));
 
-        // Owner's website.manage grant from Personal survives even
-        // though Small Business's own grant of the same capability to
-        // the same role was revoked (the N:1 capability rule, proven
-        // for real, not against a fake profile).
+        // Owner's website.manage grant from Personal (and from
+        // ModuleInstaller's own baseline grant, which uninstall never
+        // revokes — non-destructive removal, same rule as the module
+        // row itself) survives even though Small Business's own grant
+        // of the same capability to the same role was revoked (the N:1
+        // capability rule, proven for real, not against a fake profile).
         $this->assertTrue($reconciler->roleHasCapability('owner', 'website.manage'));
         $this->assertEqualsCanonicalizing(
-            ['personal'],
+            ['module:website', 'personal'],
             RoleCapabilityGrant::where('role_slug', 'owner')->where('capability_slug', 'website.manage')
                 ->pluck('granted_by_source')->toArray(),
         );
 
-        // Owner's crm.manage grant: gone entirely, since only Small
-        // Business ever granted it.
-        $this->assertFalse($reconciler->roleHasCapability('owner', 'crm.manage'));
+        // Owner's crm.manage grant from Small Business is gone — but
+        // ModuleInstaller's own baseline grant for crm survives, same
+        // non-destructive rule as the crm module row itself (orphaned,
+        // not deleted). That grant alone doesn't reopen access: crm is
+        // orphaned, so module.active still 404s it regardless of
+        // capability, proven for real two lines down.
+        $this->assertTrue($reconciler->roleHasCapability('owner', 'crm.manage'));
+        $this->assertEqualsCanonicalizing(
+            ['module:crm'],
+            RoleCapabilityGrant::where('role_slug', 'owner')->where('capability_slug', 'crm.manage')
+                ->pluck('granted_by_source')->toArray(),
+        );
 
         // The whole app is still fully usable through its real API —
         // not just correct in the database.
