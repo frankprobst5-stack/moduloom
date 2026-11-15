@@ -2,6 +2,7 @@
 
 namespace Tests;
 
+use App\Models\User;
 use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
 use Illuminate\Support\Facades\Artisan;
 
@@ -25,5 +26,14 @@ abstract class TestCase extends BaseTestCase
         parent::setUp();
 
         Artisan::call('migrate:fresh', ['--force' => true]);
+
+        // Phase 6a: every /api/* route now requires an authenticated
+        // session. The kernel/module/profile tests in this suite are
+        // about what the application does once someone is logged in,
+        // not about the login gate itself — so authenticate a user by
+        // default here rather than repeating actingAs() in every one of
+        // them. Tests\Feature\Auth\AuthTest exercises the gate directly
+        // and opts out of this per test.
+        $this->actingAs(User::factory()->create());
     }
 }

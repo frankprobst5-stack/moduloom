@@ -128,6 +128,23 @@ get full accounts or something lighter. Building this without deliberate
 design would fight invariant 3's instance-scoped roles instead of using
 them.
 
+- [x] Design scoped — see `PHASE_6_AUTH_DESIGN.md`. Grounded in the
+      actual current state (identity dormant, authorization modeled but
+      unenforced, zero link between them) and a build order (6a close
+      the hole / 6b capability enforcement / 6c Customer tier).
+- [x] 6a shipped 2026-11-15 — session login/logout, every route gated
+      (every ecosystem including Personal, per Frank's call), 56/56
+      tests passing, verified live end-to-end against the real dev
+      instance. No Owner/Staff/Customer distinction yet — single
+      all-or-nothing gate.
+- [ ] 6b — `user_role_assignments`, capability-checking middleware wired
+      per module route, Staff role support.
+- [ ] 6c — Customer tier: self-serve/invited accounts, row-level
+      ownership on Invoicing/Applications/Assignments/Workflows.
+- [ ] Known follow-up from 6a: `/api/*` has no CSRF check yet (relies on
+      `SameSite=Lax` only) — closing it means adding a CSRF header to
+      every existing `fetch()` call in the shell.
+
 ## Explicitly deferred, not forgotten
 
 - Multi-tenancy (OPEN in architecture doc)

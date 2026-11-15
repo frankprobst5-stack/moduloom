@@ -1,4 +1,6 @@
 import { useEffect, useState } from 'react';
+import { LogoLockup } from './Logo';
+import { csrfToken } from './csrf';
 
 type NavEntry = { slug: string; label: string; sort_weight: number };
 type ThemeState = { active: string; available: string[] };
@@ -40,36 +42,49 @@ export default function Dashboard() {
     };
 
     return (
-        <div style={{ display: 'flex', minHeight: '100vh', fontFamily: 'system-ui, sans-serif' }}>
-            <div style={{ width: 220, background: '#111827', color: '#fff', padding: 20 }}>
-                <strong style={{ display: 'block', marginBottom: 16 }}>Moduloom</strong>
-                {nav.map((entry) => (
+        <div style={{ display: 'flex', minHeight: '100vh', fontFamily: 'var(--brand-font-body)' }}>
+            <div style={{ width: 220, background: 'var(--brand-sidebar-bg)', color: '#fff', padding: 20, display: 'flex', flexDirection: 'column' }}>
+                <div style={{ marginBottom: 20 }}>
+                    <LogoLockup size={22} variant="dark" />
+                </div>
+                <div style={{ flex: 1 }}>
+                    {nav.map((entry) => (
+                        <a
+                            key={entry.slug}
+                            href={`/admin/${entry.slug}`}
+                            style={{ display: 'block', color: 'var(--brand-sidebar-text)', textDecoration: 'none', padding: '6px 0', fontSize: 14 }}
+                        >
+                            {entry.label}
+                        </a>
+                    ))}
                     <a
-                        key={entry.slug}
-                        href={`/admin/${entry.slug}`}
-                        style={{ display: 'block', color: '#d1d5db', textDecoration: 'none', padding: '6px 0', fontSize: 14 }}
+                        href="/marketplace"
+                        style={{ display: 'block', color: 'var(--brand-muted-soft)', textDecoration: 'none', padding: '10px 0 0', marginTop: 10, borderTop: '1px solid #2A2F48', fontSize: 13 }}
                     >
-                        {entry.label}
+                        + Browse modules
                     </a>
-                ))}
-                <a
-                    href="/marketplace"
-                    style={{ display: 'block', color: '#9ca3af', textDecoration: 'none', padding: '10px 0 0', marginTop: 10, borderTop: '1px solid #262c38', fontSize: 13 }}
-                >
-                    + Browse modules
-                </a>
+                </div>
+                <form method="POST" action="/logout">
+                    <input type="hidden" name="_token" value={csrfToken()} />
+                    <button
+                        type="submit"
+                        style={{ width: '100%', padding: '8px 0', background: 'transparent', border: '1px solid #2A2F48', borderRadius: 6, color: 'var(--brand-muted-soft)', fontSize: 13, cursor: 'pointer' }}
+                    >
+                        Log out
+                    </button>
+                </form>
             </div>
             <div style={{ flex: 1, padding: 40 }}>
-                <h1 style={{ fontSize: 22 }}>Overview</h1>
-                <p style={{ color: '#6b7280' }}>{nav.length} module{nav.length === 1 ? '' : 's'} installed.</p>
+                <h1 style={{ fontFamily: 'var(--brand-font-display)', fontWeight: 600, fontSize: 24 }}>Overview</h1>
+                <p style={{ color: 'var(--brand-muted)' }}>{nav.length} module{nav.length === 1 ? '' : 's'} installed.</p>
 
                 {theme && (
-                    <div style={{ marginTop: 24, border: '1px solid #e5e7eb', padding: 16, maxWidth: 360 }}>
-                        <strong style={{ fontSize: 13, textTransform: 'uppercase', color: '#6b7280' }}>Public site theme</strong>
-                        <p style={{ fontSize: 13, color: '#6b7280', margin: '4px 0 12px' }}>
+                    <div style={{ marginTop: 24, border: '1px solid var(--brand-border)', borderRadius: 8, padding: 16, maxWidth: 360 }}>
+                        <strong style={{ fontSize: 13, textTransform: 'uppercase', color: 'var(--brand-muted)' }}>Public site theme</strong>
+                        <p style={{ fontSize: 13, color: 'var(--brand-muted)', margin: '4px 0 12px' }}>
                             Governs only public pages (Website, Knowledge base, Public information) — never this dashboard.
                         </p>
-                        {error && <p style={{ color: '#b91c1c', fontSize: 13 }}>{error}</p>}
+                        {error && <p style={{ color: 'var(--brand-danger)', fontSize: 13 }}>{error}</p>}
                         <div style={{ display: 'flex', gap: 8 }}>
                             <select value={selected} onChange={(e) => setSelected(e.target.value)} style={{ flex: 1, padding: 6 }}>
                                 {!theme.available.includes(theme.active) && (
@@ -79,11 +94,11 @@ export default function Dashboard() {
                                     <option key={slug} value={slug}>{slug}</option>
                                 ))}
                             </select>
-                            <button onClick={activate} disabled={selected === theme.active} style={{ padding: '6px 12px', background: '#111827', color: '#fff', border: 'none', cursor: 'pointer' }}>
+                            <button onClick={activate} disabled={selected === theme.active} style={{ padding: '6px 12px', background: 'var(--brand-indigo)', color: '#fff', border: 'none', borderRadius: 6, cursor: 'pointer' }}>
                                 {selected === theme.active ? 'Active' : 'Switch'}
                             </button>
                         </div>
-                        <p style={{ fontSize: 12, color: '#9ca3af', marginTop: 8 }}>Currently active: {theme.active}</p>
+                        <p style={{ fontSize: 12, color: 'var(--brand-muted-soft)', marginTop: 8 }}>Currently active: {theme.active}</p>
                     </div>
                 )}
             </div>

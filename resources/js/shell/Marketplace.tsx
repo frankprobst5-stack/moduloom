@@ -1,4 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
+import { LogoLockup } from './Logo';
+import { csrfToken } from './csrf';
 
 type ModuleEntry = {
     slug: string;
@@ -33,9 +35,18 @@ export default function Marketplace() {
     };
 
     return (
-        <div style={{ maxWidth: 880, margin: '40px auto', fontFamily: 'system-ui, sans-serif' }}>
-            <h1 style={{ fontSize: 22, marginBottom: 4 }}>Module marketplace</h1>
-            <p style={{ color: '#6b7280', fontSize: 14, marginTop: 0, marginBottom: 20 }}>
+        <div style={{ maxWidth: 880, margin: '40px auto', fontFamily: 'var(--brand-font-body)' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
+                <LogoLockup size={20} variant="light" textColor="var(--brand-charcoal)" />
+                <form method="POST" action="/logout">
+                    <input type="hidden" name="_token" value={csrfToken()} />
+                    <button type="submit" style={{ background: 'transparent', border: '1px solid var(--brand-border)', borderRadius: 6, padding: '5px 10px', color: 'var(--brand-muted)', fontSize: 12, cursor: 'pointer' }}>
+                        Log out
+                    </button>
+                </form>
+            </div>
+            <h1 style={{ fontFamily: 'var(--brand-font-display)', fontWeight: 600, fontSize: 22, marginBottom: 4 }}>Module marketplace</h1>
+            <p style={{ color: 'var(--brand-muted)', fontSize: 14, marginTop: 0, marginBottom: 20 }}>
                 Every module works standalone or inside any ecosystem. Installing one here never touches anything else already running.
             </p>
 
@@ -46,9 +57,10 @@ export default function Marketplace() {
                         onClick={() => setCategory(c)}
                         style={{
                             padding: '6px 12px',
-                            border: '1px solid #d1d5db',
-                            background: category === c ? '#111827' : '#fff',
-                            color: category === c ? '#fff' : '#111827',
+                            borderRadius: 999,
+                            border: '1px solid var(--brand-border)',
+                            background: category === c ? 'var(--brand-indigo)' : '#fff',
+                            color: category === c ? '#fff' : 'var(--brand-charcoal)',
                             cursor: 'pointer',
                             fontSize: 13,
                         }}
@@ -60,20 +72,20 @@ export default function Marketplace() {
 
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))', gap: 12 }}>
                 {visible.map((m) => (
-                    <div key={m.slug} style={{ border: '1px solid #e5e7eb', padding: 16, display: 'flex', flexDirection: 'column', gap: 8 }}>
+                    <div key={m.slug} style={{ border: '1px solid var(--brand-border)', borderRadius: 10, padding: 16, display: 'flex', flexDirection: 'column', gap: 8 }}>
                         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
                             <strong style={{ fontSize: 14 }}>{m.label}</strong>
-                            <span style={{ fontSize: 11, color: '#9ca3af', textTransform: 'uppercase' }}>{m.category}</span>
+                            <span style={{ fontSize: 11, color: 'var(--brand-muted-soft)', textTransform: 'uppercase' }}>{m.category}</span>
                         </div>
-                        <p style={{ fontSize: 13, color: '#6b7280', margin: 0, flex: 1 }}>{m.description}</p>
+                        <p style={{ fontSize: 13, color: 'var(--brand-muted)', margin: 0, flex: 1 }}>{m.description}</p>
                         {m.requires.length > 0 && (
-                            <p style={{ fontSize: 11, color: '#9ca3af', margin: 0 }}>Requires: {m.requires.join(', ')}</p>
+                            <p style={{ fontSize: 11, color: 'var(--brand-muted-soft)', margin: 0 }}>Requires: {m.requires.join(', ')}</p>
                         )}
                         {m.installed ? (
                             <button
                                 onClick={() => uninstall(m.slug)}
                                 disabled={busy === m.slug}
-                                style={{ padding: '6px 0', border: '1px solid #d1d5db', background: '#fff', cursor: 'pointer', fontSize: 13 }}
+                                style={{ padding: '6px 0', borderRadius: 6, border: '1px solid var(--brand-border)', background: '#fff', cursor: 'pointer', fontSize: 13 }}
                             >
                                 {busy === m.slug ? 'Working…' : 'Uninstall'}
                             </button>
@@ -81,7 +93,7 @@ export default function Marketplace() {
                             <button
                                 onClick={() => install(m.slug)}
                                 disabled={busy === m.slug}
-                                style={{ padding: '6px 0', border: 'none', background: '#111827', color: '#fff', cursor: 'pointer', fontSize: 13 }}
+                                style={{ padding: '6px 0', borderRadius: 6, border: 'none', background: 'var(--brand-indigo)', color: '#fff', cursor: 'pointer', fontSize: 13 }}
                             >
                                 {busy === m.slug ? 'Working…' : 'Install'}
                             </button>

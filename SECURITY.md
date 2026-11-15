@@ -55,37 +55,34 @@ extension, so a `.php` renamed to `.pdf` still fails. Proven by
 `tests/Feature/Security/FileUploadRestrictionTest.php`: a `.php` and a
 `.html` upload are both rejected with 422, a real `.pdf` still succeeds.
 
-## The critical, deliberately unresolved finding
+## The critical finding — partially resolved (Phase 6a, 2026-11-15)
 
-**There is no authentication or authorization enforcement anywhere in
-this application.** Every route — every module's admin screen, every
-module's API, the setup wizard, the dashboard, the module marketplace,
-theme switching — is completely open. Anyone who can reach the server
-can install or uninstall any module, create or delete any data, switch
-the active theme, or install an entire ecosystem, with no login of any
-kind.
+**Originally: there was no authentication or authorization enforcement
+anywhere in this application.** Every route — every module's admin
+screen, every module's API, the setup wizard, the dashboard, the module
+marketplace, theme switching — was completely open. Anyone who could
+reach the server could install or uninstall any module, create or
+delete any data, switch the active theme, or install an entire
+ecosystem, with no login of any kind.
 
-This is not an oversight this review is introducing as a surprise — it's
+This was not an oversight this review introduced as a surprise — it was
 the explicit, named OPEN item in `MASTER_ARCHITECTURE.md`
 ("Authentication/session model details beyond 'roles are
 instance-scoped'"), carried forward deliberately since Phase 0 rather
-than bolted on half-designed. The kernel's Owner/Staff/Customer roles
-and their capability grants are real, correctly modeled, and
-thoroughly tested — but nothing in the application layer currently
-checks them against an authenticated identity, because there is no
-concept of an authenticated identity yet.
+than bolted on half-designed.
 
-**This is the one thing that must be resolved before any deployment
-reachable by anyone other than its owner on their own machine.** It's
-a real design decision, not a quick fix: session-based auth vs. tokens,
-how a logged-in user maps to the Owner/Staff/Customer roles already
-in the schema, whether Customer-role users (people outside the
-business — forum members, students, citizens submitting a request)
-get their own accounts at all or something lighter. Building it without
-that design would mean reverting invariant 3's instance-scoped roles
-into something the auth system fights, not works with.
+**Phase 6a closes the "anyone can reach it" hole.** Every route now
+requires a logged-in session — see `PHASE_6_AUTH_DESIGN.md` for the full
+design and what shipped. What 6a does *not* yet do: distinguish
+Owner/Staff/Customer (it's a single all-or-nothing gate for now), or
+enforce the kernel's existing role/capability grants against who's
+logged in. Those are 6b and 6c, deliberately deferred — see the design
+doc's build order. Building them without that design would mean
+reverting invariant 3's instance-scoped roles into something the auth
+system fights, not works with.
 
-**Recommendation:** resolve this as its own deliberate phase — call it
-Phase 6 — before `MASTER_ROADMAP.md`'s "decide public visibility" item
-is acted on for anything beyond a local demo. Everything else in this
-review is in genuinely good shape; this is the one blocker.
+**Recommendation:** 6a is enough to stop the worst case (a totally
+anonymous stranger operating the instance), but a deployment with real
+multiple users (Staff who shouldn't have Owner's reach, Customers who
+should only see their own records) still needs 6b/6c first. Everything
+else in this review is in genuinely good shape.

@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
+    <link rel="icon" type="image/svg+xml" href="/brand/moduloom-mark.svg">
     <title>Choose your ecosystem — Moduloom</title>
     @vite(['resources/css/app.css', 'resources/js/shell/picker-entry.tsx'])
 </head>
