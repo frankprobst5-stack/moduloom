@@ -159,11 +159,27 @@ them.
       a real Staff account logged in via curl gets 200 on a module it
       holds, 403 on both an instance-wide action and `/api/team`.
       63/63 tests passing.
-- [ ] 6c — Customer tier: self-serve/invited accounts, row-level
-      ownership on Invoicing/Applications/Assignments/Workflows.
+- [x] 6c shipped 2026-11-16 — row-level ownership for the four modules
+      whose `customer` role grant was already worded as "own" something
+      but had nothing to scope against: a nullable `user_id` FK added
+      to Invoices/Applications/Assignment submissions/Workflow requests,
+      a second `.view`-gated route group per module at a distinct URI
+      (not the same URI as `.manage` with different middleware — caught
+      before shipping, would have made the first-registered route
+      always win), each scoped to the authenticated user's own rows.
+      Account creation needed no new code — the Team screen already
+      handles any role, `customer` included. 67/67 tests passing,
+      verified live: created a real Customer account, had the Owner
+      issue one invoice to her and one to no one, logged in as her, and
+      confirmed she saw exactly her own invoice and was 403'd on the
+      Staff/Owner list. **Phase 6 complete** — see `PHASE_6_AUTH_DESIGN.md`.
 - [ ] Known follow-up from 6a: `/api/*` has no CSRF check yet (relies on
       `SameSite=Lax` only) — closing it means adding a CSRF header to
       every existing `fetch()` call in the shell.
+- [ ] Known gap from 6c: no module-upgrade mechanism exists for schema
+      changes to an already-installed module — this pass's `user_id`
+      migrations only run automatically on a module's first-ever
+      install. Worth a deliberate design pass, not urgent today.
 
 ## Explicitly deferred, not forgotten
 

@@ -55,7 +55,7 @@ extension, so a `.php` renamed to `.pdf` still fails. Proven by
 `tests/Feature/Security/FileUploadRestrictionTest.php`: a `.php` and a
 `.html` upload are both rejected with 422, a real `.pdf` still succeeds.
 
-## The critical finding — resolved for a multi-user instance (Phase 6a/6b, 2026-11-15/16)
+## The critical finding — resolved (Phase 6, 2026-11-15/16)
 
 **Originally: there was no authentication or authorization enforcement
 anywhere in this application.** Every route — every module's admin
@@ -83,14 +83,24 @@ through `/team`, with its own password, scoped to exactly the
 capabilities its role has been granted. See `PHASE_6_AUTH_DESIGN.md` for
 the full design and what shipped.
 
-What's still missing is the Customer tier (6c: self-serve/invited
-accounts, row-level ownership on
-Invoicing/Applications/Assignments/Workflows) and a CSRF check on
-`/api/*` (currently relies on `SameSite=Lax` only).
+**Phase 6c closed the last piece**: Customers — forum members,
+applicants, students, citizens — are real accounts too, created the
+same way Staff is through `/team`, and the four modules whose
+`customer` role grant was already worded as "own" something
+(Invoicing, Applications, Assignments, Workflows) now actually enforce
+that: a nullable `user_id` added to each, a customer-only route scoped
+to `where('user_id', $request->user()->id)`. Verified live, not just by
+test: a real Customer account saw exactly her own invoice and was
+403'd on the Staff/Owner list.
 
-**Recommendation:** 6a+6b together, including the Team flow, cover a
-real single-Owner-plus-Staff deployment — no anonymous access, Staff
-genuinely can't exceed their role, and that's now provable, not just
-modeled. A deployment that also serves Customers (forum members,
-students, citizens submitting a request) still needs 6c first.
-Everything else in this review is in genuinely good shape.
+What's left is not a security hole, just real polish: a CSRF check on
+`/api/*` (currently relies on `SameSite=Lax` only), and no mechanism
+yet for upgrading an already-installed module's schema (this pass's
+ownership columns only run automatically on first install).
+
+**Recommendation:** all three roles — Owner, Staff, Customer — are now
+enforced, not just modeled, across a real login, real capability
+checks, and real row-level ownership. This is deployable to a genuine
+multi-user instance. The two remaining items above are worth doing
+before scale, not before launch. Everything else in this review is in
+genuinely good shape.

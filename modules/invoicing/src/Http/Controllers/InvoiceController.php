@@ -17,6 +17,7 @@ class InvoiceController extends Controller
     {
         $validated = $request->validate([
             'crm_contact_id' => ['nullable', 'exists:crm_contacts,id'],
+            'user_id' => ['nullable', 'exists:users,id'],
             'customer_name' => ['required', 'string', 'max:255'],
             'amount_cents' => ['required', 'integer', 'min:0'],
             'status' => ['sometimes', 'in:draft,sent,paid'],
@@ -41,5 +42,18 @@ class InvoiceController extends Controller
         $invoice->delete();
 
         return response()->noContent();
+    }
+
+    /**
+     * invoicing.view's "view own invoices" — a Customer never sees
+     * anyone else's, including other customers' or ones with no owner
+     * set at all.
+     */
+    public function mine(Request $request)
+    {
+        return Invoice::query()
+            ->where('user_id', $request->user()->id)
+            ->latest()
+            ->get();
     }
 }

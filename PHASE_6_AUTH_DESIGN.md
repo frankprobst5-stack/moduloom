@@ -1,12 +1,12 @@
 # Phase 6 — Authentication & Authorization: Design Scope
 
-Status: **6a and 6b shipped 2026-11-15/16**, including a kernel-level
-`instance.manage` capability and a real Staff account-creation screen —
-see below. **6c (Customer tier) not started.** This document grounds
-the design in what actually existed in the codebase before this pass —
-not the generic "add a login screen" version of this task — and records
-the decisions made, per `SECURITY.md`'s recommendation that this be a
-deliberate phase rather than a bolted-on fix.
+Status: **6a, 6b, and 6c all shipped 2026-11-15/16.** Phase 6 as
+originally scoped is complete — see below for what each sub-phase
+actually built. This document grounds the design in what actually
+existed in the codebase before this pass — not the generic "add a
+login screen" version of this task — and records the decisions made,
+per `SECURITY.md`'s recommendation that this be a deliberate phase
+rather than a bolted-on fix.
 
 ## What's actually there today
 
@@ -271,7 +271,69 @@ This is what actually closes "Staff role support end-to-end" — 6b built
 the enforcement, this is the account-creation flow that makes it
 reachable.
 
+## What 6c actually shipped
+
+Row-level ownership for the four modules whose `customer` role grant
+was already worded as "own" something (`invoicing.view`,
+`applications.view`, `assignments.view`, `workflows.view`) but had
+nothing to scope against — none of the four tables (`invoices`,
+`applications`, `assignment_submissions`, `workflow_requests`) had a
+user reference at all before this.
+
+- A nullable `user_id` FK added to each (nullable because Staff can
+  still log a record — a walk-in application, a phone-in workflow
+  request — with no customer account behind it).
+- A second route group per module, gated by `capability:{module}.view`
+  instead of `.manage`, at a distinct URI (`my-invoices`,
+  `my-applications`, `my-submissions`, `my-requests`) — not the same
+  URI with different middleware, which would make the first-registered
+  route always win regardless of which one a request actually needed
+  (caught before shipping, not after).
+- Each `.view` route scopes its query to `where('user_id',
+  $request->user()->id)` — a customer never sees another customer's
+  row, or an unowned one.
+- Where a Customer submits their own record (Applications, Assignments,
+  Workflows — not Invoicing, which is issued *to* a customer, never
+  created *by* one), the controller sets `user_id`,
+  `applicant_name`/`student_name`/`requested_by` from the authenticated
+  user directly — never from client input, so a customer can't submit
+  as someone else.
+- Assignments is the one case where "own" doesn't apply to the parent
+  record: every student in a classroom legitimately sees the same
+  assignment list, so `my-assignments` reuses the exact same
+  unfiltered query as the Staff index (under its own URI) — only
+  `assignment_submissions` actually gets ownership scoping.
+
+Account creation needed no new code at all: the Team screen built right
+after 6b already lets an Owner create any account with any existing
+role, `customer` included.
+
+**Real gap surfaced, not fixed in this pass:** none of these four
+modules' migrations had ever run again since first install — this is
+the first time a module's schema changed *after* shipping. A module
+never calls `loadMigrationsFrom()` (deliberate, so `ModuleInstaller`
+controls exactly when migrations run); `ModuleInstaller::install()`
+only runs them on a module's first-ever install, by design. Adding a
+migration file to an already-installed module does nothing automatically
+for an existing instance — it has to be run manually with an explicit
+`--path`, the same way `ModuleInstaller` does it internally. There's no
+module-upgrade mechanism in the kernel yet. Didn't matter for the real
+dev instance (none of these four were installed there before this
+pass), but it's a real limitation worth having a name for before it's
+needed under pressure.
+
+67/67 tests pass (63 prior + 4 new in `CustomerTierTest`). Verified live
+end-to-end against the real dev instance, not just the test suite:
+installed Small Business, created a Customer account ("Jane") through
+`/team`, had the Owner issue one invoice to her and one to no one, then
+logged in *as Jane* and confirmed `/api/modules/invoicing/my-invoices`
+returns exactly her one invoice — not the unowned one — and
+`/api/modules/invoicing/invoices` (the Staff/Owner list) 403s her.
+
 ## Open follow-ups
 
 - CSRF on `/api/*` (noted under 6a).
-- 6c, not started: Customer tier and row-level ownership.
+- No module-upgrade mechanism for schema changes to an already-installed
+  module (noted under 6c) — a real kernel gap, not urgent today, but
+  worth a deliberate design pass before it causes a problem under less
+  careful hands than this session's.

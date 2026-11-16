@@ -32,4 +32,32 @@ class ApplicationController extends Controller
 
         return $application;
     }
+
+    /**
+     * applications.view's "submit and view own applications" — the
+     * applicant's own account, not whatever name/email they type in.
+     */
+    public function mine(Request $request)
+    {
+        return Application::query()
+            ->where('user_id', $request->user()->id)
+            ->latest()
+            ->get();
+    }
+
+    public function storeMine(Request $request)
+    {
+        $validated = $request->validate([
+            'application_type' => ['nullable', 'string', 'max:255'],
+        ]);
+
+        $application = Application::create([
+            ...$validated,
+            'user_id' => $request->user()->id,
+            'applicant_name' => $request->user()->name,
+            'email' => $request->user()->email,
+        ]);
+
+        return response()->json($application, 201);
+    }
 }
