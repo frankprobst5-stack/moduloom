@@ -3,6 +3,7 @@
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ModuleMarketplaceController;
 use App\Http\Controllers\SetupController;
+use App\Http\Controllers\TeamController;
 use App\Http\Controllers\ThemeController;
 use Illuminate\Support\Facades\Route;
 
@@ -11,7 +12,7 @@ use Illuminate\Support\Facades\Route;
 // provider's loadRoutesFrom() call.
 Route::prefix('setup')->group(function () {
     Route::get('profiles', [SetupController::class, 'profiles']);
-    Route::post('install/{slug}', [SetupController::class, 'install']);
+    Route::post('install/{slug}', [SetupController::class, 'install'])->middleware('capability:instance.manage');
 });
 
 Route::prefix('dashboard')->group(function () {
@@ -26,6 +27,11 @@ Route::prefix('theme')->group(function () {
 
 Route::prefix('marketplace')->group(function () {
     Route::get('modules', [ModuleMarketplaceController::class, 'index']);
-    Route::post('install/{slug}', [ModuleMarketplaceController::class, 'install']);
-    Route::post('uninstall/{slug}', [ModuleMarketplaceController::class, 'uninstall']);
+    Route::post('install/{slug}', [ModuleMarketplaceController::class, 'install'])->middleware('capability:instance.manage');
+    Route::post('uninstall/{slug}', [ModuleMarketplaceController::class, 'uninstall'])->middleware('capability:instance.manage');
+});
+
+Route::prefix('team')->middleware('capability:instance.manage')->group(function () {
+    Route::get('/', [TeamController::class, 'index']);
+    Route::post('/', [TeamController::class, 'store']);
 });

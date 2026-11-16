@@ -2,7 +2,7 @@
 
 namespace Tests;
 
-use App\Models\Role;
+use App\Kernel\Reconciler;
 use App\Models\User;
 use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
 use Illuminate\Support\Facades\Artisan;
@@ -38,8 +38,8 @@ abstract class TestCase extends BaseTestCase
         // Tests\Feature\Auth\* exercise the gates directly and opt out
         // of this per test.
         $user = User::factory()->create();
-        $owner = Role::firstOrCreate(['role_slug' => 'owner'], ['label' => 'Owner']);
-        $user->roles()->syncWithoutDetaching([$owner->role_slug]);
+        app(Reconciler::class)->grantCapability('owner', 'Owner', 'instance.manage', 'Manage the instance', 'kernel');
+        $user->roles()->syncWithoutDetaching(['owner']);
         $this->actingAs($user);
     }
 }

@@ -35,4 +35,5 @@ Route::middleware('auth')->group(function () {
     Route::get('/setup/onboarding', fn () => view('setup.onboarding'));
     Route::get('/dashboard', fn () => view('dashboard'));
     Route::get('/marketplace', fn () => view('marketplace'));
+    Route::get('/team', fn () => view('team'));
 });

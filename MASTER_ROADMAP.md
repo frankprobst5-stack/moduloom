@@ -148,10 +148,17 @@ them.
       around. 58/58 tests passing, verified live against the real dev
       instance (including the migration's backfill of the existing
       pre-6b account to Owner).
-- [ ] 6b, not yet done: a Staff invite/create-account flow. The
-      capability check is real and complete; there's just no UI yet for
-      an Owner to create a second account and assign it a role — every
-      account today is functionally an Owner.
+- [x] 6b follow-up shipped 2026-11-16 — a kernel-level `instance.manage`
+      capability (granted to Owner at registration, same mechanism any
+      module uses) now gates the three kernel routes 6b's module-by-
+      module pass didn't touch: setup's profile install, and marketplace
+      install/uninstall. Plus a real Team screen (`/team`) for an Owner
+      to create a Staff account with a directly-set password (no email
+      infra exists to do an invite-link) — the piece that actually makes
+      "Staff role support" reachable, not just enforced. Verified live:
+      a real Staff account logged in via curl gets 200 on a module it
+      holds, 403 on both an instance-wide action and `/api/team`.
+      63/63 tests passing.
 - [ ] 6c — Customer tier: self-serve/invited accounts, row-level
       ownership on Invoicing/Applications/Assignments/Workflows.
 - [ ] Known follow-up from 6a: `/api/*` has no CSRF check yet (relies on

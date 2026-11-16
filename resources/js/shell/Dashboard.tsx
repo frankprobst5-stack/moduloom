@@ -63,6 +63,12 @@ export default function Dashboard() {
                     >
                         + Browse modules
                     </a>
+                    <a
+                        href="/team"
+                        style={{ display: 'block', color: 'var(--brand-muted-soft)', textDecoration: 'none', padding: '6px 0 0', fontSize: 13 }}
+                    >
+                        Team
+                    </a>
                 </div>
                 <form method="POST" action="/logout">
                     <input type="hidden" name="_token" value={csrfToken()} />

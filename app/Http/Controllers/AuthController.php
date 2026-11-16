@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Role;
+use App\Kernel\Reconciler;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -25,7 +25,7 @@ class AuthController extends Controller
         return view('auth.register');
     }
 
-    public function register(Request $request)
+    public function register(Request $request, Reconciler $reconciler)
     {
         if (User::query()->exists()) {
             abort(404);
@@ -44,8 +44,12 @@ class AuthController extends Controller
         // Nothing has installed a profile yet at registration time, so
         // this is that first need; later profile installs only ever
         // attach capability grants to this same role, never redefine it.
-        $owner = Role::firstOrCreate(['role_slug' => 'owner'], ['label' => 'Owner']);
-        $user->roles()->syncWithoutDetaching([$owner->role_slug]);
+        // instance.manage is this app's own kernel-level capability
+        // (installing/removing modules and profiles, creating other
+        // accounts) — granted here the same way a module grants its own
+        // capability to whoever installs it.
+        $reconciler->grantCapability('owner', 'Owner', 'instance.manage', 'Manage the instance', 'kernel');
+        $user->roles()->syncWithoutDetaching(['owner']);
 
         Auth::login($user);
         $request->session()->regenerate();

@@ -1,11 +1,12 @@
 # Phase 6 — Authentication & Authorization: Design Scope
 
-Status: **6a shipped 2026-11-15** (session login/logout, every route
-gated, no `staff`/`customer` distinction yet — see below). This document
-grounds the design in what actually existed in the codebase before this
-pass — not the generic "add a login screen" version of this task — and
-records the decisions made, per `SECURITY.md`'s recommendation that this
-be a deliberate phase rather than a bolted-on fix.
+Status: **6a and 6b shipped 2026-11-15/16**, including a kernel-level
+`instance.manage` capability and a real Staff account-creation screen —
+see below. **6c (Customer tier) not started.** This document grounds
+the design in what actually existed in the codebase before this pass —
+not the generic "add a login screen" version of this task — and records
+the decisions made, per `SECURITY.md`'s recommendation that this be a
+deliberate phase rather than a bolted-on fix.
 
 ## What's actually there today
 
@@ -221,17 +222,12 @@ covers this directly; `EvolutionTest`'s existing assertions about exactly
 which sources grant `website.manage`/`crm.manage` were updated to
 include it, not relaxed.
 
-**What "Staff role support" means today, precisely:** the enforcement
-mechanism is real and complete — a user assigned to `staff` is granted
-or refused exactly per that role's capability grants, same as `owner`.
-What doesn't exist yet is any way for an Owner to actually create a
-Staff account and assign them the role — there is no invite/create-user
-flow anywhere in the app. That's real, separate UI and controller work
-(and its own small design question: set-password-directly vs.
-email-invite vs. temp-password), deliberately not bundled into this
-pass. Until it exists, every registered account is functionally an
-Owner, which is honest for a single-admin instance but not yet
-"Staff support end-to-end."
+**What "Staff role support" meant at this point, precisely:** the
+enforcement mechanism was real and complete — a user assigned to
+`staff` was granted or refused exactly per that role's capability
+grants, same as `owner`. What didn't exist yet was any way for an Owner
+to actually create a Staff account and assign them the role. Closed
+right after — see "What shipped after 6b" below.
 
 58/58 tests pass (56 prior + 2 new in `CapabilityEnforcementTest`), and
 the standalone-module gap was verified closed live against the real dev
@@ -244,10 +240,38 @@ migration also backfills: an instance that registered its owner under
 `owner` automatically — verified on the real persistent dev instance,
 not just a fresh test database.
 
+## What shipped after 6b, same day (2026-11-15/16)
+
+Two things Frank explicitly asked for once 6b's gaps were visible:
+
+**A kernel-level `instance.manage` capability**, granted to `owner` at
+registration (same mechanism as any module granting its own capability
+— `Reconciler::grantCapability`), now required on the three kernel
+routes that were gated only by "logged in" and nothing else: the setup
+wizard's profile install, and marketplace install/uninstall. These sit
+in `routes/api.php` directly, not inside any module's own route file,
+so the per-module `capability:{slug}` sed pass never touched them — a
+real gap 6b's own module-by-module framing missed. A backfill migration
+grants it to any pre-existing `owner` role too.
+
+**A Team screen** (`/team`, `TeamController`, `Team.tsx`) — the Staff
+account-creation flow flagged as missing right after 6b shipped. Owner
+sets the password directly (Frank's call: no invite-link, this app has
+no real outbound mail). Lists current accounts and their roles; the
+"create account" form only offers roles that already exist (a role
+with zero capabilities granted would be pointless to assign), and is
+itself gated by `instance.manage` — so a Staff account can see a module
+it's been granted, but can't see or add to the team, and can't install
+or remove anything instance-wide. All three boundaries verified for
+real against the dev instance: logged in as the newly-created Staff
+account via `curl`, confirmed a granted module returns 200, an
+instance-wide action returns 403, and `/api/team` returns 403.
+
+This is what actually closes "Staff role support end-to-end" — 6b built
+the enforcement, this is the account-creation flow that makes it
+reachable.
+
 ## Open follow-ups
 
 - CSRF on `/api/*` (noted under 6a).
-- A Staff invite/create-account flow (noted under 6b) — the missing
-  piece between "capability enforcement works" and "Staff support
-  end-to-end."
 - 6c, not started: Customer tier and row-level ownership.

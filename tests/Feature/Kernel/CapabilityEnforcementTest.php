@@ -34,4 +34,19 @@ class CapabilityEnforcementTest extends TestCase
         $this->postJson('/api/modules/notes/notes', ['title' => 'Should be refused'])
             ->assertForbidden();
     }
+
+    public function test_the_default_owner_can_install_a_profile_and_a_standalone_module(): void
+    {
+        $this->postJson('/api/setup/install/personal')->assertOk();
+        $this->postJson('/api/marketplace/install/forums')->assertNoContent();
+        $this->postJson('/api/marketplace/uninstall/forums')->assertNoContent();
+    }
+
+    public function test_a_user_without_instance_manage_cannot_install_anything_instance_wide(): void
+    {
+        $this->actingAs(User::factory()->create());
+
+        $this->postJson('/api/setup/install/personal')->assertForbidden();
+        $this->postJson('/api/marketplace/install/notes')->assertForbidden();
+    }
 }
