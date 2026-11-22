@@ -292,8 +292,22 @@ reasoning as the API surface: every module and profile has done it this
 way since Phase 0, so there's no real decision left to make, just a
 convention nothing has ever deviated from.
 
-## OPEN questions (deliberately unresolved)
+## Multi-tenancy (resolved, 2026-11-21 — out of scope)
 
-- Multi-tenancy: is one Moduloom install always one organization, or can
-  a single deployment host multiple independent instances? Deliberately
-  deferred — see `MASTER_ROADMAP.md`'s "Explicitly deferred" list.
+One Moduloom install is always one organization. Real multi-tenancy —
+one database serving many separate orgs — would mean a tenant column
+on nearly every table and every query scoped by it, a genuine
+rearchitecture nothing in this codebase's design anticipates: every
+kernel table is explicitly instance-scoped (roles, capabilities,
+installed modules), on purpose, since Phase 0. It's also not needed to
+serve multiple organizations — the shared-hosting deployment model
+(`DEPLOYMENT.md`) already supports that today, at zero extra code: a
+second organization is a second deployment, not a second row in a
+shared table. Decided against building it rather than left dangling as
+a someday-maybe.
+
+## OPEN questions
+
+None currently — every question this document originally raised has
+either been resolved by what got built or deliberately decided
+against, as recorded above.

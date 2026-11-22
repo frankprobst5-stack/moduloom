@@ -217,9 +217,15 @@ them.
       actually dropped, the kernel record gone, and the marketplace
       listing back to looking like it was never installed.
 
+## Decided against, not deferred
+
+- Multi-tenancy — closed 2026-11-21 as out of scope, not left pending.
+  One instance is always one organization; a second org is a second
+  deployment, already fully supported today. See
+  `MASTER_ARCHITECTURE.md`.
+
 ## Explicitly deferred, not forgotten
 
-- Multi-tenancy (OPEN in architecture doc)
 - Marketplace monetization / paid modules, if ever
 - Mobile app wrapper
 - Federation between separate Moduloom instances
