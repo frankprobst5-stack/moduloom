@@ -1,6 +1,7 @@
 # Federation Between Separate Moduloom Instances — Design Scope
 
-Status: scoping, not yet built. `MASTER_ROADMAP.md`'s "Explicitly
+Status: scoped and approved 2026-11-22, build starting with Fed-a.
+`MASTER_ROADMAP.md`'s "Explicitly
 deferred" list has carried "Federation between separate Moduloom
 instances" as a single, unelaborated bullet since it was first written
 — no description anywhere of what it should actually do. This document
@@ -125,26 +126,46 @@ just good practice; it's the same principle invariant 2's "additive,
 not re-provisioning" already enforces for modules, applied to content
 instead of schema.
 
+## Decisions (Frank, 2026-11-22)
+
+1. **Granularity of opt-in: per content type.** Confirmed — matches how
+   the rest of this kernel already works (capabilities, module grants
+   are all granular by default). `federation_peers.subscribed_content_types`
+   above already reflects this.
+2. **Ship Website/KB/Public-information first, extend to
+   Events/Directories later.** Confirmed — the stronger motivating case
+   (several Community-ecosystem instances cross-listing a shared events
+   calendar) needs Events to have a public page first, which is
+   separate, prior scope, not a reason to hold up what's already
+   buildable. v1 stays exactly the three modules in the table above;
+   Events/Directories federation is a real, named v2 once those modules
+   have public pages of their own — not a sign v1 is incomplete.
+
+3. **Priority: yes, build it now.** Confirmed 2026-11-22 — separate from
+   the mobile wrapper (still blocked on app-store developer accounts,
+   not being pulled forward by this).
+
 ## Open questions for Frank
 
-1. **Granularity of opt-in.** Per content-type (recommended above:
-   subscribe to a peer's Website pages but not their Notices, say) or
-   simpler — an Owner just subscribes to "everything this peer
-   publishes"? Granular costs a bit more UI, coarse is less flexible.
-2. **Does this matter without Events/Directories?** The real-world
-   motivating case for federation (several Community-ecosystem
-   instances — clubs, municipal offices — wanting to cross-list a
-   shared events calendar) needs Events to have a public page first,
-   which doesn't exist today. Worth building that alongside this, or
-   is Website/KB/Public-information syndication valuable enough on its
-   own to ship first and extend later?
-3. **Priority at all.** This was tagged "if ever" in spirit alongside
-   monetization and the mobile wrapper — is this actually wanted now,
-   or was scoping it enough for today?
+None remaining — all three resolved above.
 
-## Suggested build order, if this moves forward
+## Build order
 
-- **Fed-a:** outbound feed endpoints for the three existing public
-  modules — no peer concept yet, just making the data federatable.
+- **Fed-a: shipped 2026-11-22.** Outbound feed endpoints for the three
+  existing public modules — no peer concept yet, just making the data
+  federatable. `App\Kernel\FederationFeed::respond()` is the one shared
+  envelope (`instance`, `content_type`, `items`); each module maps its
+  own model into the common item shape
+  (`title`/`slug`/`content`/`published_at`/`canonical_url`) and hands it
+  there, same pattern as every other kernel/module boundary in this
+  codebase. `GET /federation/{website,knowledge-base,public-information}.json`,
+  same `module.active` gate as each module's own public page (an
+  orphaned module's feed 404s exactly like its page would), no new
+  auth — the content has none today on its public page either. Notices
+  have no per-item detail page, so their `canonical_url` is the
+  `/notices` listing with a `#notice-{id}` fragment, the closest honest
+  answer given what actually exists. 76/76 tests passing; verified live
+  against the real dev instance with a cold `curl` (no cookies, no
+  session at all) confirming a real page shows up with zero auth.
 - **Fed-b:** `federation_peers` + the fetch/cache job + `federated_content`.
 - **Fed-c:** public-page display of federated content, with attribution.
