@@ -226,6 +226,15 @@ them.
 
 ## Explicitly deferred, not forgotten
 
-- Marketplace monetization / paid modules, if ever
-- Mobile app wrapper
-- Federation between separate Moduloom instances
+- Marketplace monetization / paid modules, if ever — needs real business
+  decisions (pricing model, payment processor, revenue share) and a
+  live payment processor account before any code makes sense.
+- Mobile app wrapper — needs Apple/Google developer accounts before any
+  code makes sense.
+- Federation between separate Moduloom instances — scoped 2026-11-22,
+  see `FEDERATION_DESIGN.md`. Grounded in what's actually public today
+  (Website/Knowledge base/Public information, the only modules with a
+  real unauthenticated page) rather than a generic social-federation
+  model; recommends pull-based syndication with no central service,
+  consistent with "not a SaaS." Not yet built — three open questions in
+  the design doc need Frank's call first.
