@@ -4,6 +4,7 @@ namespace Moduloom\PublicInformation\Http\Controllers;
 
 use App\Kernel\FederationFeed;
 use App\Kernel\ThemeManager;
+use App\Models\FederatedContentItem;
 use Illuminate\Routing\Controller;
 use Moduloom\PublicInformation\Models\Notice;
 
@@ -13,7 +14,18 @@ class PublicNoticesController extends Controller
     {
         $notices = Notice::query()->latest('published_at')->get();
 
-        return $themes->wrap(view('public-information::notices', ['notices' => $notices]));
+        // Fed-c: federated notices show on the same page local ones do
+        // — but always as a visibly separate, attributed group, never
+        // blended in as if they were this instance's own.
+        $federated = FederatedContentItem::with('peer')
+            ->where('content_type', 'public-information')
+            ->latest('published_at')
+            ->get();
+
+        return $themes->wrap(view('public-information::notices', [
+            'notices' => $notices,
+            'federated' => $federated,
+        ]));
     }
 
     public function feed()

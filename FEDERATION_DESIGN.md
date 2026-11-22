@@ -1,6 +1,7 @@
 # Federation Between Separate Moduloom Instances — Design Scope
 
-Status: scoped and approved 2026-11-22, build starting with Fed-a.
+Status: **shipped in full 2026-11-22** — Fed-a, Fed-b, and Fed-c all
+complete, see the build order below for what each stage actually did.
 `MASTER_ROADMAP.md`'s "Explicitly
 deferred" list has carried "Federation between separate Moduloom
 instances" as a single, unelaborated bullet since it was first written
@@ -204,4 +205,31 @@ None remaining — all three resolved above.
   with the correct `content_type`, `title`, `canonical_url`, and
   `published_at`. All test data and the second process cleaned up
   afterward.
-- **Fed-c:** public-page display of federated content, with attribution.
+- **Fed-c: shipped 2026-11-22.** Public-page display of federated
+  content, with attribution — plus a real management UI for peers,
+  which Fed-b had only exposed through the raw API. A genuine
+  constraint shaped this one: Website and Knowledge base have no public
+  *listing* page at all (`/site/{slug}` and `/kb/{slug}` are direct
+  lookups only), so there was no existing page to blend their federated
+  content into the way `/notices` already had one. `/notices`
+  (`PublicNoticesController::index`) now shows a "From other instances"
+  section alongside local notices, each item linking back to its real
+  origin via `canonical_url`. A new kernel-level page,
+  `/federation/browse`, is the display surface for everything else —
+  grouped by content type, same attribution — public, no module tied to
+  it since it isn't one module's content. New `/federation` screen
+  (Dashboard sidebar link, `instance.manage` gated like Team and
+  Marketplace) lets an Owner actually add/remove peers and trigger an
+  immediate fetch, rather than needing raw `curl` against the API Fed-b
+  shipped.
+
+  85/85 tests passing. Verified live with a real second
+  `php artisan serve` process again (same lesson from Fed-b): seeded it
+  with a real notice and a real page, added it as a peer from the real
+  instance's actual Federation screen (verified in the browser, zero
+  console errors), fetched for real, and confirmed both `/notices` and
+  `/federation/browse` render the federated items with correct
+  attribution and working links back to the origin — with zero
+  authentication on either page, same trust level as the content they
+  mirror. All test data and the second process cleaned up afterward.
+  **Federation (Fed-a/b/c) is complete.**

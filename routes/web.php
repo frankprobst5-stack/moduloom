@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\FederationBrowseController;
 use App\Models\ProfileInstallHistory;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
@@ -30,10 +31,16 @@ Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth');
 
+// Fed-c: public, same as every module's own /site, /kb, /notices pages
+// — not tied to one module, so it lives at the kernel level rather
+// than inside any single module's own routes file.
+Route::get('/federation/browse', [FederationBrowseController::class, 'index']);
+
 Route::middleware('auth')->group(function () {
     Route::get('/setup', fn () => view('setup.picker'));
     Route::get('/setup/onboarding', fn () => view('setup.onboarding'));
     Route::get('/dashboard', fn () => view('dashboard'));
     Route::get('/marketplace', fn () => view('marketplace'));
     Route::get('/team', fn () => view('team'));
+    Route::get('/federation', fn () => view('federation'));
 });

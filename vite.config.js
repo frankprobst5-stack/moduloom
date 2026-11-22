@@ -15,6 +15,7 @@ export default defineConfig({
                 'resources/js/shell/dashboard-entry.tsx',
                 'resources/js/shell/marketplace-entry.tsx',
                 'resources/js/shell/team-entry.tsx',
+                'resources/js/shell/federation-entry.tsx',
                 'resources/js/modules/notes/admin.tsx',
                 'resources/js/modules/tasks/admin.tsx',
                 'resources/js/modules/files/admin.tsx',

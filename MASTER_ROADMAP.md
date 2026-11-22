@@ -245,8 +245,16 @@ three modules with a real public page today.
       present in `.env` but commented out, so the dev server was
       single-worker and would deadlock on any self-referential
       concurrent request — enabled it.
-- [ ] Fed-c — public-page display of federated content, with
-      attribution to its origin instance.
+- [x] Fed-c shipped 2026-11-22 — `/notices` shows federated notices
+      alongside local ones, attributed; `/federation/browse` is the
+      display surface for Website/Knowledge base federated content
+      (neither has a public listing page to blend into — only direct
+      slug lookups); a real `/federation` management screen (Dashboard
+      sidebar link) replaces needing raw `curl` against Fed-b's API.
+      85/85 tests passing, verified live end-to-end with a real second
+      server process: seeded content, added it as a peer from the
+      browser, fetched for real, confirmed both display pages render it
+      correctly attributed. **Federation is complete.**
 
 ## Explicitly deferred, not forgotten
 

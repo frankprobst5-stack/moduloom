@@ -69,6 +69,12 @@ export default function Dashboard() {
                     >
                         Team
                     </a>
+                    <a
+                        href="/federation"
+                        style={{ display: 'block', color: 'var(--brand-muted-soft)', textDecoration: 'none', padding: '6px 0 0', fontSize: 13 }}
+                    >
+                        Federation
+                    </a>
                 </div>
                 <form method="POST" action="/logout">
                     <input type="hidden" name="_token" value={csrfToken()} />
