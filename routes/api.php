@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\FederationPeerController;
 use App\Http\Controllers\ModuleMarketplaceController;
 use App\Http\Controllers\SetupController;
 use App\Http\Controllers\TeamController;
@@ -35,4 +36,11 @@ Route::prefix('marketplace')->group(function () {
 Route::prefix('team')->middleware('capability:instance.manage')->group(function () {
     Route::get('/', [TeamController::class, 'index']);
     Route::post('/', [TeamController::class, 'store']);
+});
+
+Route::prefix('federation/peers')->middleware('capability:instance.manage')->group(function () {
+    Route::get('/', [FederationPeerController::class, 'index']);
+    Route::post('/', [FederationPeerController::class, 'store']);
+    Route::delete('{peer}', [FederationPeerController::class, 'destroy']);
+    Route::post('{peer}/fetch', [FederationPeerController::class, 'fetchNow']);
 });

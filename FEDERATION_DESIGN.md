@@ -167,5 +167,41 @@ None remaining — all three resolved above.
   answer given what actually exists. 76/76 tests passing; verified live
   against the real dev instance with a cold `curl` (no cookies, no
   session at all) confirming a real page shows up with zero auth.
-- **Fed-b:** `federation_peers` + the fetch/cache job + `federated_content`.
+- **Fed-b: shipped 2026-11-22.** `federation_peers` (base URL, label,
+  per-content-type opt-in, `last_fetched_at`) and `federated_content`
+  (unique on peer + canonical URL, so re-fetching is idempotent —
+  Reconciler's own `firstOrCreate`/unique-constraint convention, applied
+  to content instead of schema). `App\Kernel\FederationFetcher` pulls
+  each subscribed peer's feed(s) and upserts; an unreachable or broken
+  peer is skipped, never fatal, so one bad peer can't block fetching
+  from the rest. `php artisan federation:fetch` runs it, scheduled
+  hourly in `routes/console.php`; peer management
+  (`GET/POST /api/federation/peers`, `DELETE .../{peer}`,
+  `POST .../{peer}/fetch` for an immediate pull) sits behind
+  `instance.manage`, same as Team and Marketplace install/uninstall.
+  81/81 tests passing (peer HTTP responses faked with `Http::fake()` —
+  the standard way to test an outbound HTTP client deterministically,
+  not a shortcut on correctness; the pipeline itself, including
+  idempotency and failure handling, runs for real against that faked
+  response). One bug the tests caught before anything shipped:
+  `last_fetched_at` wasn't in the model's `$fillable`, so the update
+  was silently no-op'd by mass-assignment protection — the test
+  asserting it got set is what caught this, not inspection.
+
+  Live verification needed a real second process, not the originally-
+  planned self-peering trick: a single-worker dev server deadlocks
+  trying to serve an outbound request to itself while it's still
+  handling the inbound one that triggered it. Fixed the dev environment
+  for real along the way — `.env`'s `PHP_CLI_SERVER_WORKERS` was
+  present but commented out; enabled it, which is a legitimate fix
+  regardless of federation (any future concurrent-request scenario
+  would hit the same deadlock). Even with that fixed, still verified
+  against a genuinely separate second `php artisan serve` process on a
+  different port rather than self-peering, since two distinct processes
+  is the actually-representative case. Confirmed for real: created a
+  page on the "peer," triggered a fetch from the real instance, got
+  `{"fetched": 1, ...}`, and found the cached row in `federated_content`
+  with the correct `content_type`, `title`, `canonical_url`, and
+  `published_at`. All test data and the second process cleaned up
+  afterward.
 - **Fed-c:** public-page display of federated content, with attribution.

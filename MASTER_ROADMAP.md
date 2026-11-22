@@ -224,6 +224,30 @@ them.
   deployment, already fully supported today. See
   `MASTER_ARCHITECTURE.md`.
 
+## Federation between separate Moduloom instances
+
+Promoted out of "deferred" 2026-11-22 once scoped and approved — see
+`FEDERATION_DESIGN.md` for the full design. Pull-based content
+syndication (not a generic social-federation model — no central
+service, no shared identity, consistent with "not a SaaS") for the
+three modules with a real public page today.
+
+- [x] Scoped — three open questions resolved with Frank directly
+      (per-content-type opt-in; ship without Events/Directories and
+      extend later; build now, not parked).
+- [x] Fed-a shipped 2026-11-22 — outbound feed endpoints for
+      Website/Knowledge base/Public information.
+- [x] Fed-b shipped 2026-11-22 — `federation_peers` +
+      `FederationFetcher` + `federated_content`, Owner-managed peer
+      list, hourly scheduled pull. 81/81 tests passing, verified live
+      against a real second server process. Found and fixed a real dev-
+      environment gap along the way: `PHP_CLI_SERVER_WORKERS` was
+      present in `.env` but commented out, so the dev server was
+      single-worker and would deadlock on any self-referential
+      concurrent request — enabled it.
+- [ ] Fed-c — public-page display of federated content, with
+      attribution to its origin instance.
+
 ## Explicitly deferred, not forgotten
 
 - Marketplace monetization / paid modules, if ever — needs real business
@@ -231,10 +255,3 @@ them.
   live payment processor account before any code makes sense.
 - Mobile app wrapper — needs Apple/Google developer accounts before any
   code makes sense.
-- Federation between separate Moduloom instances — scoped 2026-11-22,
-  see `FEDERATION_DESIGN.md`. Grounded in what's actually public today
-  (Website/Knowledge base/Public information, the only modules with a
-  real unauthenticated page) rather than a generic social-federation
-  model; recommends pull-based syndication with no central service,
-  consistent with "not a SaaS." Not yet built — three open questions in
-  the design doc need Frank's call first.
