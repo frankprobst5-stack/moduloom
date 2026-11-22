@@ -257,10 +257,9 @@ capabilities are enforced with real row-level ownership (a `user_id` on
 the owned record, scoped queries), not just a role check. Full design
 and what shipped in each sub-phase: `PHASE_6_AUTH_DESIGN.md`.
 
-One thing this resolution didn't cover, tracked in `MASTER_ROADMAP.md`:
-no mechanism for upgrading an already-installed module's schema (6c's
-ownership columns only auto-run on a module's first-ever install). CSRF
-on `/api/*` closed 2026-11-21 — see `MASTER_ROADMAP.md`.
+Two things this resolution didn't cover at the time — both since closed
+2026-11-21, see `MASTER_ROADMAP.md`: CSRF on `/api/*`, and no mechanism
+for upgrading an already-installed module's schema.
 
 ## API surface (resolved by precedent)
 

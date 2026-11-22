@@ -186,10 +186,20 @@ them.
       passing (CSRF is auto-bypassed under `php artisan test` by
       Laravel's own `runningUnitTests()` check — verification for this
       one had to be live, not unit tests).
-- [ ] Known gap from 6c: no module-upgrade mechanism exists for schema
-      changes to an already-installed module — this pass's `user_id`
-      migrations only run automatically on a module's first-ever
-      install. Worth a deliberate design pass, not urgent today.
+- [x] Module schema upgrades closed 2026-11-21 — `ModuleInstaller::install()`
+      now runs `migrate --path` every time it's called, not just on
+      first create. Laravel's own migration repository already tracks
+      which specific files have run per path, so repeating the call is
+      a safe no-op for anything already applied and picks up a new
+      migration file automatically — no new tracking machinery needed,
+      just removing a gate that no longer served a purpose. Proven with
+      a real migration file written at test time (not a mock): installed
+      `notes`, confirmed a column didn't exist, dropped a new migration
+      into the module's own directory simulating a later-shipped
+      version, called `install()` again as a second referrer (not a
+      fresh install), and confirmed the column now exists. Also verified
+      live against the real dev instance the same way, then rolled the
+      temp migration back and deleted it. 68/68 tests passing.
 
 ## Explicitly deferred, not forgotten
 

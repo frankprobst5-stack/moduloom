@@ -8,9 +8,16 @@ use RuntimeException;
 
 /**
  * Sits above the Reconciler: resolves a module's manifest, installs its
- * declared dependencies first, and — only the first time a module is
- * ever created — runs its migrations. Re-installing an already-present
- * module (a second referrer showing up) never touches its schema again.
+ * declared dependencies first, and runs its migrations through
+ * Laravel's own migrator every time install() is called — not just on
+ * first create. That's what makes a module's schema upgradeable at
+ * all: Laravel's migration repository already tracks which specific
+ * migration files have run, per path, so calling `migrate --path=...`
+ * again is a safe no-op for files it's already seen and picks up any
+ * new one a module ships later. A later profile referencing an
+ * already-installed module never re-provisions its *data* (invariant
+ * 2) — this only ever adds schema the module's own manifest declares,
+ * the same thing first-install already did.
  */
 class ModuleInstaller
 {
@@ -35,19 +42,17 @@ class ModuleInstaller
             $this->install($requiredSlug, 'module_dependency', $moduleSlug);
         }
 
-        $module = $this->reconciler->installModule(
+        $this->reconciler->installModule(
             $moduleSlug,
             $referenceType,
             $referenceIdentifier,
             $manifest->version(),
         );
 
-        if ($module->wasRecentlyCreated) {
-            Artisan::call('migrate', [
-                '--path' => $this->relativeMigrationsPath($manifest->migrationsPath()),
-                '--force' => true,
-            ]);
-        }
+        Artisan::call('migrate', [
+            '--path' => $this->relativeMigrationsPath($manifest->migrationsPath()),
+            '--force' => true,
+        ]);
 
         foreach ($manifest->capabilities() as $capability) {
             // Phase 1 deferred granting these to anyone — there were no

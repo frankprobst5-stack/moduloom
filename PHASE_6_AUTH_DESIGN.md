@@ -308,19 +308,16 @@ Account creation needed no new code at all: the Team screen built right
 after 6b already lets an Owner create any account with any existing
 role, `customer` included.
 
-**Real gap surfaced, not fixed in this pass:** none of these four
-modules' migrations had ever run again since first install — this is
-the first time a module's schema changed *after* shipping. A module
-never calls `loadMigrationsFrom()` (deliberate, so `ModuleInstaller`
-controls exactly when migrations run); `ModuleInstaller::install()`
-only runs them on a module's first-ever install, by design. Adding a
-migration file to an already-installed module does nothing automatically
-for an existing instance — it has to be run manually with an explicit
-`--path`, the same way `ModuleInstaller` does it internally. There's no
-module-upgrade mechanism in the kernel yet. Didn't matter for the real
-dev instance (none of these four were installed there before this
-pass), but it's a real limitation worth having a name for before it's
-needed under pressure.
+**Real gap surfaced in this pass, closed in the next one (2026-11-21):**
+none of these four modules' migrations had ever run again since first
+install — this was the first time a module's schema changed *after*
+shipping, and `ModuleInstaller::install()` only ran migrations on a
+module's first-ever install, by design. Fixed by simply removing that
+gate — `install()` now calls `migrate --path` every time, and Laravel's
+own migration repository (which files have already run, per path)
+makes repeating that call a safe no-op for anything already applied.
+Proven with a real migration file written at test time, not a mock:
+see `ModuleSchemaUpgradeTest`.
 
 67/67 tests pass (63 prior + 4 new in `CustomerTierTest`). Verified live
 end-to-end against the real dev instance, not just the test suite:
@@ -332,8 +329,9 @@ returns exactly her one invoice — not the unowned one — and
 
 ## Open follow-ups
 
+Both closed 2026-11-21 — see `MASTER_ROADMAP.md`:
 - CSRF on `/api/*` (noted under 6a).
-- No module-upgrade mechanism for schema changes to an already-installed
-  module (noted under 6c) — a real kernel gap, not urgent today, but
-  worth a deliberate design pass before it causes a problem under less
-  careful hands than this session's.
+- The module-upgrade mechanism (noted under 6c).
+
+Remaining, outside Phase 6's own scope — see `MASTER_ARCHITECTURE.md`'s
+OPEN questions: orphaned module data purge policy, and multi-tenancy.
