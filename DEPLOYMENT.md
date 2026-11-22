@@ -2,8 +2,12 @@
 
 Written for BlueHost/DreamHost-class shared hosting, per
 `MASTER_ARCHITECTURE.md`'s deployment target. Read `SECURITY.md` first —
-this application currently has no authentication at all; do not deploy
-it anywhere reachable by the public internet until that's resolved.
+Phase 6 (authentication, capability enforcement, row-level Customer
+ownership) is complete, so this is safe to deploy and reach from the
+public internet; `SECURITY.md` still has the two honest remaining items
+worth knowing about before you do (CSRF relies on `Sec-Fetch-Site`/
+`SameSite=Lax` rather than a universal token, and there's no mechanism
+yet for upgrading an already-installed module's schema).
 
 ## Requirements
 
@@ -92,13 +96,38 @@ specifically (never the whole project) is the usual fix — never `777`.
 
 ## Cron / scheduler
 
-Nothing in Moduloom currently needs Laravel's scheduler — no module
-ships a scheduled job. Skip the usual cron entry unless a future module
-adds one.
+**Required as of Federation (`FEDERATION_DESIGN.md`).** `php artisan
+federation:fetch` is scheduled hourly in `routes/console.php` — but
+Laravel's scheduler only actually runs anything when something calls
+`php artisan schedule:run` on a timer; it does not run itself. Add the
+standard Laravel cron entry (most hosts' control panels have a cron
+job section for exactly this):
+
+```bash
+* * * * * cd /path/to/moduloom && php artisan schedule:run >> /dev/null 2>&1
+```
+
+Skipping this doesn't error or warn — an instance with federation
+peers added will just silently never fetch anything, which is easy to
+miss since nothing on the Federation screen tells you the cron isn't
+running. If an instance has no federation peers and never will, this
+step can genuinely be skipped; otherwise it's required, not optional.
 
 ## After deploy
 
-Visit `/setup` and install your first ecosystem. There is no seed data
-and no default account — the instance starts genuinely empty, by
-design, the same as any fresh Personal/Small Business/etc. install
-proven in this project's own test suite.
+A genuinely fresh instance (no `User` row yet) redirects `/` straight
+to `/register` — a one-time screen that creates the instance's owner
+account and closes itself the moment that account exists; there is no
+sign-up after that point, by design (see `PHASE_6_AUTH_DESIGN.md`).
+From there it's `/setup` to install your first ecosystem. There is no
+seed data beyond that one owner account — the instance starts
+genuinely empty otherwise, the same as any fresh Personal/Small
+Business/etc. install proven in this project's own test suite.
+
+Verified for real before writing this section down: migrated a
+genuinely empty database, registered the first owner over HTTP exactly
+as documented above, installed Small Business through the real
+`/api/setup/install` endpoint, landed on `/dashboard` with the real
+installed modules in its nav, and created a real CRM contact through
+the real module API — the full path a new adopter would actually take,
+not just the commands in isolation.
