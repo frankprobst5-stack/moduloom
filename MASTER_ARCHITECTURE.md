@@ -1,9 +1,12 @@
 # Moduloom — Master Architecture
 
-Status: pre-implementation. This document captures decisions made before
-any code was written, so they can be challenged and revised deliberately
-instead of discovered by accident mid-build. Sections marked **OPEN** are
-known-unresolved and should not be treated as decided.
+Status: Phases 0-6 implemented (kernel through authentication/
+authorization — see `MASTER_ROADMAP.md`). Originally written
+pre-implementation so these decisions could be challenged and revised
+deliberately instead of discovered by accident mid-build; kept current
+since as each one gets resolved or superseded by what actually got
+built. Sections marked **OPEN** are still genuinely unresolved and
+should not be treated as decided.
 
 ## Technology decisions
 
@@ -237,13 +240,50 @@ Mechanically:
   through `App\Kernel\ThemeManager::wrap()`, which renders it inside
   the active theme's layout.
 
+## Authentication & authorization (resolved, Phase 6)
+
+Session-based, through Laravel's own `web` guard — not Sanctum, not a
+separate token layer, since every client is this same app's own
+same-origin React shell. Identity (`users`) and the kernel's existing
+instance-scoped roles are linked by `user_role_assignments`
+(many-to-many); a `capability:{slug}` middleware sits alongside
+`module.active` on every module's own routes, plus a kernel-level
+`instance.manage` capability on the handful of routes that live outside
+any module (setup's profile install, marketplace install/uninstall,
+team management). An Owner creates Staff and Customer accounts through
+`/team` with a directly-set password — there's no invite-link flow,
+since this app has no real outbound mail. Customer-facing "view own X"
+capabilities are enforced with real row-level ownership (a `user_id` on
+the owned record, scoped queries), not just a role check. Full design
+and what shipped in each sub-phase: `PHASE_6_AUTH_DESIGN.md`.
+
+Two things this resolution didn't cover, tracked in `MASTER_ROADMAP.md`:
+no CSRF check on `/api/*` yet (relies on `SameSite=Lax` only), and no
+mechanism for upgrading an already-installed module's schema (6c's
+ownership columns only auto-run on a module's first-ever install).
+
+## API surface (resolved by precedent)
+
+REST, not GraphQL — every module's admin screen has talked to its own
+`/api/modules/{slug}/...` JSON endpoints since Phase 1, with zero
+exceptions across six phases. Never written down as a decision because
+it was never actually in question once the first module shipped.
+
+## Module/profile manifest format (resolved by precedent)
+
+A PHP class implementing `ModuleManifest`/`ProfileManifest`, returned
+from `App::make()` against a slug registered in `config/modules.php` /
+`config/profiles.php` — not a JSON file, not a separate schema. Same
+reasoning as the API surface: every module and profile has done it this
+way since Phase 0, so there's no real decision left to make, just a
+convention nothing has ever deviated from.
+
 ## OPEN questions (deliberately unresolved)
 
-- Exact format and validation story for module/profile manifests (JSON?
-  PHP array returned from a service provider? versioned schema?).
 - How an orphaned module's data is eventually, optionally, purged — and
-  by whom.
+  by whom. Nothing built across six phases has touched this; orphaning
+  (not purging) is still the only thing `ModuleInstaller`/`Reconciler`
+  ever do on removal.
 - Multi-tenancy: is one Moduloom install always one organization, or can
-  a single deployment host multiple independent instances?
-- Authentication/session model details beyond "roles are instance-scoped."
-- API surface for the React admin frontend: REST, GraphQL, or both.
+  a single deployment host multiple independent instances? Deliberately
+  deferred — see `MASTER_ROADMAP.md`'s "Explicitly deferred" list.
