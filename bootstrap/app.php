@@ -33,6 +33,14 @@ return Application::configure(basePath: dirname(__DIR__))
         // cookie already set by login, prepending the cookie/session
         // middleware here gets the same effect without pulling in
         // Sanctum for a single-client app that doesn't need tokens.
+        //
+        // PreventRequestForgery closes the CSRF gap this group was
+        // otherwise missing — but it trusts the browser's own
+        // Sec-Fetch-Site header first, and every fetch() call in this
+        // shell is same-origin, so none of them need any change at all.
+        // A request with no Sec-Fetch-Site (curl, a future non-browser
+        // client) falls back to the same token the 'web' group already
+        // uses — the csrf-token meta tag every blade view already sets.
         $middleware->api(
             prepend: [
                 \Illuminate\Cookie\Middleware\EncryptCookies::class,
@@ -40,6 +48,7 @@ return Application::configure(basePath: dirname(__DIR__))
                 \Illuminate\Session\Middleware\StartSession::class,
             ],
             append: [
+                \Illuminate\Foundation\Http\Middleware\PreventRequestForgery::class,
                 \Illuminate\Auth\Middleware\Authenticate::class,
             ],
         );

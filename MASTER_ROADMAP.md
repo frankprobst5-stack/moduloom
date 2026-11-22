@@ -173,9 +173,19 @@ them.
       issue one invoice to her and one to no one, logged in as her, and
       confirmed she saw exactly her own invoice and was 403'd on the
       Staff/Owner list. **Phase 6 complete** — see `PHASE_6_AUTH_DESIGN.md`.
-- [ ] Known follow-up from 6a: `/api/*` has no CSRF check yet (relies on
-      `SameSite=Lax` only) — closing it means adding a CSRF header to
-      every existing `fetch()` call in the shell.
+- [x] CSRF on `/api/*` closed 2026-11-21 — Laravel 13's
+      `PreventRequestForgery` middleware trusts the browser's own
+      `Sec-Fetch-Site: same-origin` header first, falling back to a
+      token only when that's absent. Every `fetch()` call in this shell
+      is same-origin, so none of the 27 files needed to change — turned
+      out simpler than the original "add a header to every fetch()
+      call" plan. Verified live via curl: no origin header and no
+      token → 419; `Sec-Fetch-Site: same-origin` → 201 (the real
+      browser's path); a valid token with no origin header → 201 (the
+      fallback a non-browser client would use). 67/67 tests still
+      passing (CSRF is auto-bypassed under `php artisan test` by
+      Laravel's own `runningUnitTests()` check — verification for this
+      one had to be live, not unit tests).
 - [ ] Known gap from 6c: no module-upgrade mechanism exists for schema
       changes to an already-installed module — this pass's `user_id`
       migrations only run automatically on a module's first-ever
