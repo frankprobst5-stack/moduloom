@@ -29,6 +29,7 @@ Route::prefix('marketplace')->group(function () {
     Route::get('modules', [ModuleMarketplaceController::class, 'index']);
     Route::post('install/{slug}', [ModuleMarketplaceController::class, 'install'])->middleware('capability:instance.manage');
     Route::post('uninstall/{slug}', [ModuleMarketplaceController::class, 'uninstall'])->middleware('capability:instance.manage');
+    Route::delete('purge/{slug}', [ModuleMarketplaceController::class, 'purge'])->middleware('capability:instance.manage');
 });
 
 Route::prefix('team')->middleware('capability:instance.manage')->group(function () {

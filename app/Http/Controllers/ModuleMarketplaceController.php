@@ -6,6 +6,7 @@ use App\Kernel\ModuleInstaller;
 use App\Kernel\Reconciler;
 use App\Models\InstalledModule;
 use Illuminate\Routing\Controller;
+use RuntimeException;
 
 /**
  * "Module marketplace UI (browse/install beyond your current
@@ -18,13 +19,13 @@ class ModuleMarketplaceController extends Controller
 {
     public function index(ModuleInstaller $installer, Reconciler $reconciler)
     {
-        $installed = InstalledModule::whereIn('status', ['active', 'disabled'])
-            ->pluck('module_slug')
-            ->all();
+        $statuses = InstalledModule::whereIn('status', ['active', 'disabled', 'orphaned'])
+            ->pluck('status', 'module_slug');
 
         return collect(config('modules', []))
-            ->map(function (string $class, string $slug) use ($installer, $reconciler, $installed) {
+            ->map(function (string $class, string $slug) use ($installer, $reconciler, $statuses) {
                 $manifest = $installer->manifestFor($slug);
+                $status = $statuses->get($slug);
 
                 return [
                     'slug' => $manifest->slug(),
@@ -32,7 +33,8 @@ class ModuleMarketplaceController extends Controller
                     'description' => $manifest->description(),
                     'category' => $manifest->category(),
                     'requires' => $manifest->requires(),
-                    'installed' => in_array($slug, $installed, true),
+                    'installed' => in_array($status, ['active', 'disabled'], true),
+                    'orphaned' => $status === 'orphaned',
                     'reference_count' => $reconciler->referenceCount($slug),
                 ];
             })
@@ -50,6 +52,17 @@ class ModuleMarketplaceController extends Controller
     public function uninstall(string $slug, ModuleInstaller $installer)
     {
         $installer->uninstall($slug, 'manual', 'marketplace');
+
+        return response()->noContent();
+    }
+
+    public function purge(string $slug, ModuleInstaller $installer)
+    {
+        try {
+            $installer->purge($slug);
+        } catch (RuntimeException $e) {
+            return response()->json(['message' => $e->getMessage()], 422);
+        }
 
         return response()->noContent();
     }

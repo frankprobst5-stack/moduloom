@@ -2,6 +2,8 @@
 
 namespace App\Kernel;
 
+use App\Models\InstalledModule;
+use App\Models\ModuleReference;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Artisan;
 use RuntimeException;
@@ -81,6 +83,49 @@ class ModuleInstaller
         // ever orphans — see MASTER_ARCHITECTURE.md's non-destructive
         // removal rule.
         $this->reconciler->removeReference($moduleSlug, $referenceType, $referenceIdentifier);
+    }
+
+    /**
+     * The "separate, explicitly-confirmed, distinct action"
+     * MASTER_ARCHITECTURE.md's non-destructive removal rule always
+     * said purging would have to be — never reachable from uninstall()
+     * itself. Only ever allowed on a module that is actually orphaned:
+     * refusing an active or disabled module here is what keeps this
+     * from ever being used as a shortcut around the reference-count
+     * rule invariant 1 exists to enforce.
+     *
+     * Reverses every migration this module's own path has ever run,
+     * regardless of which batch it ran in (--step with a number far
+     * larger than any real module will ever have), then releases the
+     * module-sourced capability grant (install() granted one;
+     * invariant 3 means any profile's own separate grant for the same
+     * capability is untouched and survives) and removes the kernel's
+     * own record that this module ever existed.
+     */
+    public function purge(string $moduleSlug): void
+    {
+        $module = InstalledModule::where('module_slug', $moduleSlug)->first();
+
+        if (! $module || $module->status !== 'orphaned') {
+            throw new RuntimeException(
+                "Cannot purge [{$moduleSlug}]: it must be orphaned (zero referrers) first.",
+            );
+        }
+
+        $manifest = $this->manifestFor($moduleSlug);
+
+        Artisan::call('migrate:rollback', [
+            '--path' => $this->relativeMigrationsPath($manifest->migrationsPath()),
+            '--step' => 9999,
+            '--force' => true,
+        ]);
+
+        foreach ($manifest->capabilities() as $capability) {
+            $this->reconciler->revokeGrant('owner', $capability['slug'], 'module:'.$moduleSlug);
+        }
+
+        ModuleReference::where('module_slug', $moduleSlug)->delete();
+        $module->delete();
     }
 
     private function relativeMigrationsPath(string $absolutePath): string

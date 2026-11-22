@@ -128,6 +128,21 @@ separate, explicitly-confirmed, distinct action. Auto-deleting on
 refcount-zero is the one place this design could become destructive by
 default, which directly contradicts the Vision document's core claim.
 
+**Purge, resolved 2026-11-21.** `ModuleInstaller::purge()` is that
+separate action — refuses outright unless the module's current status
+is actually `orphaned` (an active or never-installed module can't be
+purged, full stop), reverses every migration that module's own path has
+ever run via `migrate:rollback --step=9999` (not just its first-install
+migrations — this works correctly alongside the schema-upgrade fix
+above because Laravel's migration repository tracks every file, not
+just the first batch), releases the `module:{slug}`-sourced capability
+grant `install()` created (a profile's own separate grant for the same
+capability is untouched — invariant 3), and deletes the kernel's own
+record that the module ever existed. Reachable only through the
+marketplace, gated by `instance.manage`, with the UI requiring an
+explicit confirmation before calling it — never a consequence of
+uninstalling.
+
 ## Kernel schema sketch
 
 ```
@@ -279,10 +294,6 @@ convention nothing has ever deviated from.
 
 ## OPEN questions (deliberately unresolved)
 
-- How an orphaned module's data is eventually, optionally, purged — and
-  by whom. Nothing built across six phases has touched this; orphaning
-  (not purging) is still the only thing `ModuleInstaller`/`Reconciler`
-  ever do on removal.
 - Multi-tenancy: is one Moduloom install always one organization, or can
   a single deployment host multiple independent instances? Deliberately
   deferred — see `MASTER_ROADMAP.md`'s "Explicitly deferred" list.

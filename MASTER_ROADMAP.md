@@ -200,6 +200,22 @@ them.
       fresh install), and confirmed the column now exists. Also verified
       live against the real dev instance the same way, then rolled the
       temp migration back and deleted it. 68/68 tests passing.
+- [x] Orphaned module data purge closed 2026-11-21 —
+      `ModuleInstaller::purge()`, the "separate, explicitly-confirmed,
+      distinct action" `MASTER_ARCHITECTURE.md`'s non-destructive
+      removal rule always said this would have to be. Refuses outright
+      on anything not actually orphaned, reverses every migration the
+      module's path has ever run (`migrate:rollback --step=9999`, not
+      just the first batch — works correctly with the schema-upgrade
+      fix above since Laravel tracks every file, not just the first
+      one), releases its own capability grant, deletes the kernel
+      record. Reachable only through the marketplace
+      (`DELETE /api/marketplace/purge/{slug}`, `instance.manage`
+      gated), with a confirmation dialog before the UI ever calls it.
+      72/72 tests passing. Verified live: orphaned a module left over
+      from an earlier test, purged it for real, confirmed its table
+      actually dropped, the kernel record gone, and the marketplace
+      listing back to looking like it was never installed.
 
 ## Explicitly deferred, not forgotten
 

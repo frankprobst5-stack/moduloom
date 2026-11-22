@@ -9,6 +9,7 @@ type ModuleEntry = {
     category: string;
     requires: string[];
     installed: boolean;
+    orphaned: boolean;
     reference_count: number;
 };
 
@@ -32,6 +33,12 @@ export default function Marketplace() {
     const uninstall = (slug: string) => {
         setBusy(slug);
         fetch(`/api/marketplace/uninstall/${slug}`, { method: 'POST' }).then(load).finally(() => setBusy(null));
+    };
+
+    const purge = (slug: string, label: string) => {
+        if (!window.confirm(`Permanently delete all of ${label}'s data? This cannot be undone.`)) return;
+        setBusy(slug);
+        fetch(`/api/marketplace/purge/${slug}`, { method: 'DELETE' }).then(load).finally(() => setBusy(null));
     };
 
     return (
@@ -81,6 +88,11 @@ export default function Marketplace() {
                         {m.requires.length > 0 && (
                             <p style={{ fontSize: 11, color: 'var(--brand-muted-soft)', margin: 0 }}>Requires: {m.requires.join(', ')}</p>
                         )}
+                        {m.orphaned && (
+                            <p style={{ fontSize: 11, color: 'var(--brand-brass)', margin: 0 }}>
+                                Not in use — its data is still here. Reinstall to pick back up, or purge to delete it for good.
+                            </p>
+                        )}
                         {m.installed ? (
                             <button
                                 onClick={() => uninstall(m.slug)}
@@ -95,7 +107,16 @@ export default function Marketplace() {
                                 disabled={busy === m.slug}
                                 style={{ padding: '6px 0', borderRadius: 6, border: 'none', background: 'var(--brand-indigo)', color: '#fff', cursor: 'pointer', fontSize: 13 }}
                             >
-                                {busy === m.slug ? 'Working…' : 'Install'}
+                                {busy === m.slug ? 'Working…' : m.orphaned ? 'Reinstall' : 'Install'}
+                            </button>
+                        )}
+                        {m.orphaned && (
+                            <button
+                                onClick={() => purge(m.slug, m.label)}
+                                disabled={busy === m.slug}
+                                style={{ padding: '6px 0', borderRadius: 6, border: '1px solid var(--brand-danger)', background: '#fff', color: 'var(--brand-danger)', cursor: 'pointer', fontSize: 13 }}
+                            >
+                                {busy === m.slug ? 'Working…' : 'Purge data permanently'}
                             </button>
                         )}
                     </div>
